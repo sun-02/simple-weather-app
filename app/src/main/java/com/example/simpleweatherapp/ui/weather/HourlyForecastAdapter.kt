@@ -8,10 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simpleweatherapp.R
 import com.example.simpleweatherapp.databinding.ItemHourlyForecastBinding
-import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.example.simpleweatherapp.model.openweather.HourlyForecast
-import com.example.simpleweatherapp.ui.search.LocationsListAdapter
-import com.example.simpleweatherapp.ui.search.OnItemClickListener
 import java.time.format.DateTimeFormatter
 
 class HourlyForecastAdapter(
@@ -63,9 +60,4 @@ class HourlyForecastAdapter(
             weatherIconResources[weather.weatherIcon]?.get(1) ?: R.drawable.ic_unavailable 
         holder.bind(weather, weatherIconRes)
     }
-
-
-
-
-
 }

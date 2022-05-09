@@ -38,5 +38,6 @@ data class DailyForecast(
     val uvi: Double,
     val windSpeed: Double,
     val windDeg: Int,
-    val weatherIcon: String
+    val weatherIcon: String,
+    var expanded: Boolean = false
 )

@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simpleweatherapp.databinding.ItemLocationBinding
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
+import com.example.simpleweatherapp.ui.OnItemClickListener
 
 class LocationsListAdapter(
     private val itemClickListener: OnItemClickListener
@@ -26,7 +27,7 @@ class LocationsListAdapter(
         }
 
         override fun onClick(v: View?) {
-            itemClickListener.onClick(v, adapterPosition)
+            itemClickListener.onItemClick(v, adapterPosition)
         }
     }
 
@@ -59,6 +60,3 @@ class LocationsListAdapter(
     }
 }
 
-interface OnItemClickListener {
-    fun onClick(view: View?, position: Int)
-}

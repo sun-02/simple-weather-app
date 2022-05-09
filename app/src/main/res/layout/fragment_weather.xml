@@ -299,15 +299,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_daily_forecast_date_header" />
 
-    <ExpandableListView
-        android:id="@+id/elv_daily_forecast"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rv_daily_forecast"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginEnd="@dimen/margin_medium"
+        android:orientation="vertical"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/div_daily_forecast"
+        tools:ignore="SpeakableTextPresentCheck"
         tools:listitem="@layout/item_daily_forecast" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

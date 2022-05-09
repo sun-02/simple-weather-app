@@ -6,15 +6,15 @@ import android.graphics.drawable.RotateDrawable
 import android.os.Bundle
 import android.util.ArrayMap
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ExpandableListView
-import android.widget.SimpleExpandableListAdapter
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.RecyclerView
 import com.example.simpleweatherapp.Const
 import com.example.simpleweatherapp.SimpleWeatherApplication
 import com.example.simpleweatherapp.databinding.FragmentWeatherBinding
@@ -29,9 +29,12 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.withContext
+import com.example.simpleweatherapp.R
+import com.example.simpleweatherapp.ui.OnItemClickListener
+import com.example.simpleweatherapp.util.getResFromRange
+import kotlinx.coroutines.flow.first
 
-
-class WeatherFragment : Fragment(),
+class WeatherFragment : Fragment(), OnItemClickListener,
     EasyPermissions.PermissionCallbacks {
 
     companion object {
@@ -40,14 +43,14 @@ class WeatherFragment : Fragment(),
 
     private val rotateDrawablePivot = 0.5f
 
-    private val weatherIconResources = ArrayMap<String, List<Int>>()
+    private val weatherIconsRes = ArrayMap<String, List<Int>>()
 
-    private val uviIconResources = ArrayMap<ClosedRange<Double>, Int>()
+    private val uviIconsRes = ArrayMap<ClosedRange<Double>, Int>()
 
     private val windDirections = ArrayMap<ClosedRange<Int>, String>()
 
     init {
-        weatherIconResources.apply {
+        weatherIconsRes.apply {
             put("01d", listOf(R.drawable.clear_sky_01d, R.drawable.ic_01d_96))
             put("02d", listOf(R.drawable.few_clouds_02d, R.drawable.ic_02d_96))
             put("03d", listOf(R.drawable.scattered_clouds_03d, R.drawable.ic_03d_96))
@@ -67,7 +70,7 @@ class WeatherFragment : Fragment(),
             put("13n", listOf(R.drawable.snow_13n, R.drawable.ic_13n_96))
             put("50n", listOf(R.drawable.mist_50n, R.drawable.ic_50n_96))
         }
-        uviIconResources.apply {
+        uviIconsRes.apply {
             put(0.0..2.999, R.drawable.ic_uvi_1_2_24dp)
             put(3.0..5.999, R.drawable.ic_uvi_3_5_24dp)
             put(6.0..7.999, R.drawable.ic_uvi_6_7_24dp)
@@ -110,7 +113,26 @@ class WeatherFragment : Fragment(),
     private var _binding: FragmentWeatherBinding? = null
     private val binding = _binding!!
 
-    private val hourlyForecastAdapter = HourlyForecastAdapter(weatherIconResources)
+    private val hourlyForecastAdapter = HourlyForecastAdapter(weatherIconsRes)
+
+    private val dailyForecastAdapter = DailyForecastAdapter(
+        weatherIconsRes,
+        uviIconsRes,
+        windDirections,
+        this
+    )
+
+    override fun onItemClick(view: View?, position: Int) {
+        // Expand clicked daily forecast item
+        lifecycleScope.launchWhenResumed {
+            val dailyForecast = viewModel.locationAndWeather.first().second.dailyForecast
+            for (weather in dailyForecast) {
+                weather.expanded = false
+            }
+            dailyForecast[position].expanded = true
+            dailyForecastAdapter.submitList(dailyForecast)
+        }
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -132,6 +154,8 @@ class WeatherFragment : Fragment(),
             }
 
         }
+        binding.rvHourlyForecast.adapter = hourlyForecastAdapter
+        binding.rvDailyForecast.adapter = dailyForecastAdapter
         lifecycleScope.launchWhenStarted {
             viewModel.locationAndWeather.collect {
                 bindWeather(it.first, it.second)
@@ -149,8 +173,8 @@ class WeatherFragment : Fragment(),
 
     private fun bindWeather(sLocation: ShortLocation, weather: OneCallWeather) {
         val weatherIconBigRes =
-            weatherIconResources[weather.weatherIcon]?.get(0) ?: R.drawable.ic_unavailable
-        val windDirDescription = getDirText(weather.windDeg) ?: "N/A"
+            weatherIconsRes[weather.weatherIcon]?.get(0) ?: R.drawable.ic_unavailable
+        val windDirText = getResFromRange(windDirections, weather.windDeg) ?: "N/A"
         val windArrow = RotateDrawable().apply {
             drawable = AppCompatResources.getDrawable(
                 requireContext(), R.drawable.ic_arrow_16dp)
@@ -158,7 +182,8 @@ class WeatherFragment : Fragment(),
             pivotY = rotateDrawablePivot
             fromDegrees = weather.windDeg.toFloat()
         }
-        val uviIconRes = getUviIconRes(weather.uvi) ?: R.drawable.ic_unavailable
+        val uviIconRes = getResFromRange(uviIconsRes, weather.uvi) ?: R.drawable.ic_unavailable
+        val uviIcon = AppCompatResources.getDrawable(requireContext(), uviIconRes)
 
         binding.apply {
             toolbarWeather.title = sLocation.name
@@ -167,34 +192,15 @@ class WeatherFragment : Fragment(),
             ivWeather.setImageResource(weatherIconBigRes)
             tvCurrentFeelsLike.text = weather.feelsLike.toString()
             tvCurrentWind.text = weather.windSpeed.toString()
-            tvCurrentWindDeg.text = windDirDescription
-            tvCurrentWindDeg.setCompoundDrawables(
-                windArrow,
-                null, null, null
-            )
+            tvCurrentWindDeg.text = windDirText
+            tvCurrentWindDeg.setCompoundDrawables(windArrow, null, null, null)
             tvCurrentHumidity.text = weather.humidity.toString()
             tvCurrentPressure.text = weather.pressure.toString()
             tvCurrentDewPoint.text = weather.dewPoint.toString()
             tvCurrentUvi.text = weather.uvi.toString()
-            tvCurrentUvi.setCompoundDrawables(
-                AppCompatResources.getDrawable(requireContext(), uviIconRes),
-                null, null, null
-            )
-
-            rvHourlyForecast.adapter = hourlyForecastAdapter
+            tvCurrentUvi.setCompoundDrawables(uviIcon, null, null, null)
             hourlyForecastAdapter.submitList(weather.hourlyForecast)
 
-            val groupDataList = listOf<>()
-
-            val xListAdapter = SimpleExpandableListAdapter(
-                requireContext(), groupDataList,
-                android.R.layout.simple_expandable_list_item_1, groupFrom,
-                groupTo, сhildDataList, android.R.layout.simple_list_item_1,
-                childFrom, childTo
-            )
-
-            val expandableListView = findViewById(R.id.expListView) as ExpandableListView
-            expandableListView.setAdapter(xListAdapter)
         }
     }
 
@@ -208,13 +214,15 @@ class WeatherFragment : Fragment(),
     }
 
     private fun getUviIconRes(uvi: Double): Int? {
-        for (k in uviIconResources.keys) {
+        for (k in uviIconsRes.keys) {
             if (k.contains(uvi)) {
-                return uviIconResources[k]
+                return uviIconsRes[k]
             }
         }
         return null
     }
+
+
 
     private fun hideLayout() {
         val views = binding.root.getAllViews()

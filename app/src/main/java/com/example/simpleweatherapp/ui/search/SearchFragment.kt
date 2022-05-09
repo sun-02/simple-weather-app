@@ -14,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import com.example.simpleweatherapp.SimpleWeatherApplication
 import com.example.simpleweatherapp.databinding.FragmentSearchBinding
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
+import com.example.simpleweatherapp.ui.OnItemClickListener
 import kotlinx.coroutines.flow.collect
 
 class SearchFragment : Fragment(), TextWatcher, OnItemClickListener {
@@ -88,7 +89,7 @@ class SearchFragment : Fragment(), TextWatcher, OnItemClickListener {
         }
     }
 
-    override fun onClick(view: View?, position: Int) {
+    override fun onItemClick(view: View?, position: Int) {
         TODO("Not yet implemented")
     }
 
