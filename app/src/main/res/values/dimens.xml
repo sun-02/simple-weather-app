@@ -8,11 +8,14 @@
     <dimen name="margin_large">16dp</dimen>
     <dimen name="margin_medium">12dp</dimen>
     <dimen name="margin_small">8dp</dimen>
+    <dimen name="margin_tiny_plus">6dp</dimen>
     <dimen name="margin_tiny">4dp</dimen>
 
     <!-- Font size -->
     <dimen name="font_small">12sp</dimen>
+    <dimen name="font_small_plus">16sp</dimen>
     <dimen name="font_medium">18sp</dimen>
+    <dimen name="font_medium_plus">21sp</dimen>
     <dimen name="font_large">24sp</dimen>
 
     <!-- AppBar -->
@@ -21,6 +24,13 @@
     <dimen name="appbar_height">48dp</dimen>
     <dimen name="filler_radius">20dp</dimen>
     <dimen name="appbar_title_elevation">6dp</dimen>
+
+    <!-- Hourly Forecast -->
+    <dimen name="weather_image_height">36dp</dimen>
+
+    <!-- Daily forecast -->
+    <dimen name="daily_temp_width">38dp</dimen>
+    <dimen name="daily_expanded_width">70dp</dimen>
 
 
 </resources>

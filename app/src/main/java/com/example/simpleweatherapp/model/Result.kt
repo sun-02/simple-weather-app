@@ -17,3 +17,11 @@ sealed class Result<out R> {
 
 val Result<*>.succeeded
     get() = this is Result.Success && data != null
+
+fun <T> Result<T>.unbox() : T? {
+    return if (this is Result.Success) {
+        this.data
+    } else {
+        null
+    }
+}

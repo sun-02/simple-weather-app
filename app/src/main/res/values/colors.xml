@@ -56,8 +56,24 @@
     <color name="md_theme_dark_shadow">#000000</color>
     <color name="md_theme_dark_primaryInverse">#6750A4</color>
     <color name="seed">#6750A4</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="text_color">#000000</color>
+    <color name="text_color_semitransparent">#BF000000</color>
+    <color name="divider">#40000000</color>
     <color name="error">#BA1B1B</color>
     <color name="text_on_white_disabled">#80000000</color>
     <color name="text_on_black_disabled">#80FFFFFF</color>
     <color name="icons">#1C1B1F</color>
+    <color name="transparent">#00FFFFFF</color>
+    <color name="flickr_pink">#F72585</color>
+    <color name="mint_green">#82FF9E</color>
+    <color name="yellow_crayola">#FFD166</color>
+    <color name="ocean_blue">#3F37C9</color>
+    <color name="azure">#4895EF</color>
+    <color name="flickr_pink_cold_desat">#BF2C9C</color>
+    <color name="mint_green_cold_desat">#89E0B0</color>
+    <color name="yellow_crayola_cold_desat">#DDBD89</color>
+    <color name="ocean_blue_cold_desat">#413DC2</color>
+    <color name="azure_cold_desat">#4F84E8</color>
 </resources>

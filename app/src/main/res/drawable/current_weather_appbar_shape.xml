@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+    <corners android:radius="@dimen/appbar_corner_radius"/>
+    <solid android:color="@color/transparent"/>
+    <!-- Заменить на селектор для светлой/темной темы -->
+    <stroke android:color="@color/white"
+        android:width="@dimen/appbar_stroke_width"/>
+</shape>

@@ -6,9 +6,9 @@
   <path
       android:pathData="M21.9,12L3.1,12"
       android:strokeWidth="2"
-      android:strokeColor="@color/icons"/>
+      android:strokeColor="@color/text_color"/>
   <path
       android:pathData="M9.1,6l-6,6l6,6"
       android:strokeWidth="2"
-      android:strokeColor="@color/icons"/>
+      android:strokeColor="@color/text_color"/>
 </vector>

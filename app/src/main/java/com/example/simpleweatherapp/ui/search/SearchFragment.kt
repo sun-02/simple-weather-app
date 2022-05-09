@@ -13,7 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.example.simpleweatherapp.SimpleWeatherApplication
 import com.example.simpleweatherapp.databinding.FragmentSearchBinding
-import com.example.simpleweatherapp.model.Location
+import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import kotlinx.coroutines.flow.collect
 
 class SearchFragment : Fragment(), TextWatcher, OnItemClickListener {
@@ -23,7 +23,7 @@ class SearchFragment : Fragment(), TextWatcher, OnItemClickListener {
     }
     private lateinit var binding: FragmentSearchBinding
     private lateinit var locationsListAdapter: LocationsListAdapter
-    private lateinit var locations: List<Location>
+    private lateinit var shortLocations: List<ShortLocation>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,7 +52,7 @@ class SearchFragment : Fragment(), TextWatcher, OnItemClickListener {
 
         lifecycleScope.launchWhenStarted {
             viewModel.locations.collect { locations ->
-                this@SearchFragment.locations = locations
+                this@SearchFragment.shortLocations = locations
                 locationsListAdapter.submitList(locations)
             }
         }
@@ -84,7 +84,7 @@ class SearchFragment : Fragment(), TextWatcher, OnItemClickListener {
 
     override fun afterTextChanged(s: Editable?) {
         if (s!!.length >= 2) {
-            viewModel.queryLocation(s.toString())
+            viewModel.queryLocationByName(s.toString())
         }
     }
 

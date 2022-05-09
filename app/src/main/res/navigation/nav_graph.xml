@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph.xml"
-    app:startDestination="@id/mapFragment">
+    app:startDestination="@id/currentWeatherFragment">
 
     <fragment
         android:id="@+id/mapFragment"
@@ -15,7 +15,7 @@
             app:destination="@id/searchFragment" />
         <argument
             android:name="location"
-            app:argType="com.example.simpleweatherapp.model.Location" />
+            app:argType="com.example.simpleweatherapp.model.bingmaps.Location" />
     </fragment>
     <fragment
         android:id="@+id/searchFragment"
@@ -25,5 +25,14 @@
         <action
             android:id="@+id/action_searchFragment_to_mapFragment2"
             app:destination="@id/mapFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/currentWeatherFragment"
+        android:name="com.example.simpleweatherapp.ui.weather.WeatherFragment"
+        android:label="fragment_current_weather"
+        tools:layout="@layout/fragment_weather" >
+        <argument
+            android:name="newShortLocation"
+            app:argType="com.example.simpleweatherapp.model.bingmaps.ShortLocation" />
     </fragment>
 </navigation>

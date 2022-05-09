@@ -3,26 +3,25 @@ package com.example.simpleweatherapp.ui.search
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.NavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simpleweatherapp.databinding.ItemLocationBinding
-import com.example.simpleweatherapp.model.Location
+import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 
 class LocationsListAdapter(
     private val itemClickListener: OnItemClickListener
-) : ListAdapter<Location, LocationsListAdapter.LocationViewHolder>(DiffCallback) {
+) : ListAdapter<ShortLocation, LocationsListAdapter.LocationViewHolder>(DiffCallback) {
 
     class LocationViewHolder(
-        private var binding: ItemLocationBinding,
+        private val binding: ItemLocationBinding,
         private val itemClickListener: OnItemClickListener
     ) :
         RecyclerView.ViewHolder(binding.root),
         View.OnClickListener {
 
-        fun bind(location: Location) {
-            binding.namedLocation.text = location.name
+        fun bind(shortLocation: ShortLocation) {
+            binding.namedLocation.text = shortLocation.name
             binding.root.setOnClickListener(this)
         }
 
@@ -44,15 +43,17 @@ class LocationsListAdapter(
         holder.bind(location)
     }
 
-    companion object DiffCallback : DiffUtil.ItemCallback<Location>() {
-        override fun areItemsTheSame(oldItem: Location,
-                                     newItem: Location): Boolean {
+    companion object DiffCallback : DiffUtil.ItemCallback<ShortLocation>() {
+        override fun areItemsTheSame(oldItem: ShortLocation,
+                                     newItem: ShortLocation
+        ): Boolean {
             return oldItem.name == newItem.name
 
         }
 
-        override fun areContentsTheSame(oldItem: Location,
-                                        newItem: Location): Boolean {
+        override fun areContentsTheSame(oldItem: ShortLocation,
+                                        newItem: ShortLocation
+        ): Boolean {
             return oldItem == newItem
         }
     }

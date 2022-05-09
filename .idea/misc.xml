@@ -21,11 +21,41 @@
         <entry key="..\:/Users/sun/AndroidStudioProjects/SimpleWeatherApp/app/src/main/res/layout/item_location.xml" value="0.18854166666666666" />
         <entry key="..\:/Users/sun/AndroidStudioProjects/SimpleWeatherApp/app/src/main/res/layout/item_search.xml" value="0.33" />
         <entry key="..\:/Users/sun/AndroidStudioProjects/SimpleWeatherApp/app/src/main/res/menu/menu_main.xml" value="0.18854166666666666" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/current_weather_appbar_shape.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/grad_flickr_pink.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_arrow_16dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_arrow_20dp.xml" value="0.1" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_arrow_rotate.xml" value="0.1" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_back_24dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_dew_point_20dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_dew_point_24dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_heart_24dp.xml" value="0.1325" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_humidity_20dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_humidity_24dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_max_temp_16dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_min_temp_16dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_pressure_20dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_pressure_24dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_search_24dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_visibility_20dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_visibility_24dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_wind_16dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_wind_20dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/ic_wind_24dp.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/icons8_wind_90.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/search_appbar_shape.xml" value="0.1325" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/uvi_filter.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/drawable/weather_big_icon.xml" value="0.13" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/layout/fragment_current_weather.xml" value="0.25" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/layout/fragment_search.xml" value="0.1" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/layout/fragment_weather.xml" value="0.5" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/layout/item_daily_forecast.xml" value="0.5" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/layout/item_daily_forecast_expanded.xml" value="0.5" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/layout/item_daily_forecast_extended.xml" value="0.18854166666666666" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/layout/item_hourly_forecast.xml" value="0.5" />
+        <entry key="..\:/Users/sun/AndroidStudioProjects/simple-weather-app/app/src/main/res/layout/sbsdfb.xml" value="0.33" />
       </map>
     </option>
-  </component>
-  <component name="ProjectPlainTextFileTypeManager">
-    <file url="file://$PROJECT_DIR$/app/src/main/java/com/example/simpleweatherapp/util/tmp.kt" />
   </component>
   <component name="ProjectRootManager" version="2" languageLevel="JDK_11" default="true" project-jdk-name="Android Studio default JDK" project-jdk-type="JavaSDK">
     <output url="file://$PROJECT_DIR$/build/classes" />
