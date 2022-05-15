@@ -4,6 +4,7 @@ import com.example.simpleweatherapp.BuildConfig
 import com.example.simpleweatherapp.Config
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface BingMapsService {
@@ -14,11 +15,11 @@ interface BingMapsService {
         @Query("key") bingMapsApiKey: String = BuildConfig.BING_MAPS_KEY
     ): Response<List<ShortLocation>>
 
-    @GET(Config.BING_MAPS_LOCATIONS_API_URL)
+    @GET("${Config.BING_MAPS_LOCATIONS_API_URL}/{lat},{lon}")
     suspend fun fetchLocationByCoords(
-        @Query("lat") latitude: Double,
-        @Query("lon") longitude: Double,
+        @Path("lat") latitude: Double,
+        @Path("lon") longitude: Double,
         @Query("includeEntityTypes") includeEntityTypes: String = "PopulatedPlace",
         @Query("key") bingMapsApiKey: String = BuildConfig.BING_MAPS_KEY
-    ): Response<ShortLocation>
+    ): Response<List<ShortLocation>>
 }

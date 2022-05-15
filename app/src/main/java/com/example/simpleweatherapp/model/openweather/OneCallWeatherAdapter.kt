@@ -16,7 +16,7 @@ class OneCallWeatherAdapter {
         for (hw in r.hourly) {
             hourlyForecast.add(
                 HourlyForecast(
-                    dateEpoch = hw.dt as Long,
+                    dateEpoch = hw.dt.toLong(),
                     time = LocalTime.ofSecondOfDay((offset + hw.dt) % secondsInDay),
                     temp = hw.temp,
                     weatherIcon = hw.weather[0].icon
@@ -27,7 +27,7 @@ class OneCallWeatherAdapter {
         for (dw in r.daily) {
             dailyForecast.add(
                 DailyForecast(
-                    date = LocalDate.ofEpochDay((r.current.dt + offset) / secondsInDay),
+                    date = LocalDate.ofEpochDay((offset + dw.dt) / secondsInDay),
                     dayTemp = dw.temp.day,
                     nightTemp = dw.temp.night,
                     pressure = dw.pressure,
@@ -40,7 +40,7 @@ class OneCallWeatherAdapter {
             )
         }
         return OneCallWeather(
-            date = LocalDate.ofEpochDay((r.current.dt + offset) / 24L / 60L / 60L),
+            date = LocalDate.ofEpochDay((r.current.dt + offset) / secondsInDay),
             temp = r.current.temp,
             feelsLike = r.current.feels_like,
             pressure = r.current.pressure,

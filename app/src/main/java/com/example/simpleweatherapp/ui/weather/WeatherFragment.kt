@@ -2,46 +2,45 @@ package com.example.simpleweatherapp.ui.weather
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.graphics.drawable.RotateDrawable
 import android.os.Bundle
 import android.util.ArrayMap
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat.getColor
+import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.simpleweatherapp.Const
 import com.example.simpleweatherapp.SimpleWeatherApplication
 import com.example.simpleweatherapp.databinding.FragmentWeatherBinding
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.example.simpleweatherapp.model.openweather.OneCallWeather
-import com.example.simpleweatherapp.util.getAllViews
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.tasks.*
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.withContext
 import com.example.simpleweatherapp.R
 import com.example.simpleweatherapp.ui.OnItemClickListener
-import com.example.simpleweatherapp.util.getResFromRange
+import com.example.simpleweatherapp.util.*
+import com.google.android.material.snackbar.Snackbar
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 
-class WeatherFragment : Fragment(), OnItemClickListener,
+class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRefreshListener,
     EasyPermissions.PermissionCallbacks {
 
     companion object {
         private const val ACCESS_COARSE_LOCATION_PERMISSIONS_REQUEST = 1
     }
-
-    private val rotateDrawablePivot = 0.5f
 
     private val weatherIconsRes = ArrayMap<String, List<Int>>()
 
@@ -98,9 +97,10 @@ class WeatherFragment : Fragment(), OnItemClickListener,
         }
     }
 
-    private val args by navArgs<WeatherFragmentArgs>()
+//    private val args by navArgs<WeatherFragmentArgs>()
 
-    private val application = requireContext().applicationContext as SimpleWeatherApplication
+    private var _application: SimpleWeatherApplication? = null
+    private val application get() = _application!!
 
     private val viewModel: WeatherViewModel by viewModels {
         WeatherViewModelFactory(
@@ -111,7 +111,7 @@ class WeatherFragment : Fragment(), OnItemClickListener,
     }
 
     private var _binding: FragmentWeatherBinding? = null
-    private val binding = _binding!!
+    private val binding get() = _binding!!
 
     private val hourlyForecastAdapter = HourlyForecastAdapter(weatherIconsRes)
 
@@ -121,18 +121,6 @@ class WeatherFragment : Fragment(), OnItemClickListener,
         windDirections,
         this
     )
-
-    override fun onItemClick(view: View?, position: Int) {
-        // Expand clicked daily forecast item
-        lifecycleScope.launchWhenResumed {
-            val dailyForecast = viewModel.locationAndWeather.first().second.dailyForecast
-            for (weather in dailyForecast) {
-                weather.expanded = false
-            }
-            dailyForecast[position].expanded = true
-            dailyForecastAdapter.submitList(dailyForecast)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -144,6 +132,15 @@ class WeatherFragment : Fragment(), OnItemClickListener,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        //Set the toolbar top margin with respect of the status bar
+        (binding.toolbarWeather.layoutParams as ViewGroup.MarginLayoutParams)
+            .topMargin = binding.toolbarLayoutWeather.marginTop + getStatusBarHeight()
+
+        binding.skeletonLayout.showSkeleton()
+
+        _application = requireContext().applicationContext as SimpleWeatherApplication
+
         lifecycleScope.launchWhenStarted {
             viewModel.isWeatherAvailable.collect { isAvailable ->
                 if (isAvailable) {
@@ -154,75 +151,114 @@ class WeatherFragment : Fragment(), OnItemClickListener,
             }
 
         }
-        binding.rvHourlyForecast.adapter = hourlyForecastAdapter
-        binding.rvDailyForecast.adapter = dailyForecastAdapter
+        setupWeather()
+
         lifecycleScope.launchWhenStarted {
             viewModel.locationAndWeather.collect {
+
                 bindWeather(it.first, it.second)
+                binding.skeletonLayout.showOriginal()
+                
             }
         }
-        lifecycleScope.launchWhenStarted {
-            withContext(Dispatchers.IO) {
-                while (true) {
-                    setViewModelWeather()
-                    delay(Const.WEATHER_REFRESH_INTERVAL)
+        setViewModelWeather()
+    }
+
+    private fun setupWeather() {
+        binding.apply {
+            rvHourlyForecast.adapter = hourlyForecastAdapter
+            rvDailyForecast.layoutManager =
+                object : LinearLayoutManager(requireContext()){
+                    override fun canScrollVertically(): Boolean { return false }
                 }
-            }
+            rvDailyForecast.adapter = dailyForecastAdapter
+            val dailyForecastItemDivider = DividerItemDecoration(requireContext(),
+                RecyclerView.VERTICAL)
+            dailyForecastItemDivider.setDrawable(
+                AppCompatResources.getDrawable(requireContext(), R.drawable.daily_forecast_item_divider)!!
+            )
+            rvDailyForecast.addItemDecoration(dailyForecastItemDivider)
+
+            swiperefresh.setOnRefreshListener(this@WeatherFragment)
         }
     }
 
     private fun bindWeather(sLocation: ShortLocation, weather: OneCallWeather) {
         val weatherIconBigRes =
             weatherIconsRes[weather.weatherIcon]?.get(0) ?: R.drawable.ic_unavailable
+
+        val temp = weather.temp.toInt()
+        val tempFormatted = getString(R.string.temp_n_dew_point_formatted, intToSignedString(temp))
+
+        val feelsLike = weather.feelsLike.toInt()
+        val feelsLikeFormatted = getString(R.string.feels_like_formatted, intToSignedString(feelsLike))
+
+        val textColor = getColor(requireContext(), R.color.text_color)
+        
+        val wind = weather.windSpeed.toInt().toString()
+        val windFormatted = getString(R.string.wind_speed_formatted, wind)
+        val windSpanned = paintStartValue(windFormatted, wind, textColor)
         val windDirText = getResFromRange(windDirections, weather.windDeg) ?: "N/A"
-        val windArrow = RotateDrawable().apply {
-            drawable = AppCompatResources.getDrawable(
-                requireContext(), R.drawable.ic_arrow_16dp)
-            pivotX = rotateDrawablePivot
-            pivotY = rotateDrawablePivot
-            fromDegrees = weather.windDeg.toFloat()
-        }
+        val windArrow = AppCompatResources.getDrawable(
+            requireContext(), R.drawable.ic_arrow_rotate)!!
+        windArrow.level = (weather.windDeg * Const.DEGREE_TO_LEVEL_COEF).toInt()
+        
+        val humidity = weather.humidity.toString()
+        val humidityFormatted = getString(R.string.humidity_formatted, humidity, "%")
+        val humiditySpanned = paintStartValue(humidityFormatted, humidity, textColor)
+
+        val pressure = weather.pressure.toString()
+        val pressureFormatted = getString(R.string.pressure_formatted, pressure)
+        val pressureSpanned = paintStartValue(pressureFormatted, pressure, textColor)
+        
+        val dewPoint = weather.dewPoint.toInt().toString()
+        val dewPointFormatted = getString(R.string.temp_n_dew_point_formatted, dewPoint)
+        val dewPointSpanned = paintStartValue(dewPointFormatted, dewPoint, textColor)
+
+        val visibility = (weather.visibility / 1000).toString()
+        val visibilityFormatted = getString(R.string.visibility_formatted, visibility)
+        val visibilitySpanned = paintStartValue(visibilityFormatted, visibility, textColor)
+
+        val uvi = weather.uvi.toInt().toString()
+        val uviFormatted = getString(R.string.uvi_formatted, uvi)
+        val uviSpanned = paintEndValue(uviFormatted, uvi, textColor)
         val uviIconRes = getResFromRange(uviIconsRes, weather.uvi) ?: R.drawable.ic_unavailable
         val uviIcon = AppCompatResources.getDrawable(requireContext(), uviIconRes)
-
+        
         binding.apply {
-            toolbarWeather.title = sLocation.name
-            tvCurrentTemp.text = weather.temp.toString()
+            toolbarWeather.title = sLocation.populatedPlace
+            tvCurrentTemp.text = tempFormatted
             tvCurrentWeather.text = weather.weatherTitle
             ivWeather.setImageResource(weatherIconBigRes)
-            tvCurrentFeelsLike.text = weather.feelsLike.toString()
-            tvCurrentWind.text = weather.windSpeed.toString()
+            tvCurrentFeelsLike.text = feelsLikeFormatted
+            tvCurrentWind.text = windSpanned
             tvCurrentWindDeg.text = windDirText
-            tvCurrentWindDeg.setCompoundDrawables(windArrow, null, null, null)
-            tvCurrentHumidity.text = weather.humidity.toString()
-            tvCurrentPressure.text = weather.pressure.toString()
-            tvCurrentDewPoint.text = weather.dewPoint.toString()
-            tvCurrentUvi.text = weather.uvi.toString()
-            tvCurrentUvi.setCompoundDrawables(uviIcon, null, null, null)
+            tvCurrentWindDeg.setCompoundDrawablesWithIntrinsicBounds(
+                windArrow, null, null, null)
+            tvCurrentHumidity.text = humiditySpanned
+            tvCurrentPressure.text = pressureSpanned
+            tvCurrentDewPoint.text = dewPointSpanned
+            tvCurrentVisibility.text = visibilitySpanned
+            tvCurrentUvi.text = uviSpanned
+            tvCurrentUvi.setCompoundDrawablesWithIntrinsicBounds(
+                uviIcon, null, null, null)
+
             hourlyForecastAdapter.submitList(weather.hourlyForecast)
+            dailyForecastAdapter.submitList(weather.dailyForecast)
 
+            // Replacing stubs with actual views before turning skeleton off
+            divTop.visibility = View.VISIBLE
+            divBottom.visibility = View.VISIBLE
+            divDailyForecast.visibility = View.VISIBLE
+            currentTempNWeatherStub.visibility = View.GONE
+            rvHourlyForecastStub.root.visibility = View.GONE
+            rvHourlyForecast.visibility = View.VISIBLE
+            rvDailyForecastStub.root.visibility = View.GONE
+            rvDailyForecast.visibility = View.VISIBLE
+
+            swiperefresh.isRefreshing = false
         }
     }
-
-    private fun getDirText(windDeg: Int): String? {
-        for (k in windDirections.keys) {
-            if (k.contains(windDeg)) {
-                return windDirections[k]
-            }
-        }
-        return null
-    }
-
-    private fun getUviIconRes(uvi: Double): Int? {
-        for (k in uviIconsRes.keys) {
-            if (k.contains(uvi)) {
-                return uviIconsRes[k]
-            }
-        }
-        return null
-    }
-
-
 
     private fun hideLayout() {
         val views = binding.root.getAllViews()
@@ -242,17 +278,17 @@ class WeatherFragment : Fragment(), OnItemClickListener,
     }
 
     private fun setViewModelWeather() {
-        if (arguments != null) {
-            // Set with search results
-            viewModel.setWeather(args.newShortLocation)
-        } else {
+//        if (arguments != null) {
+//            // Set with search results
+//            viewModel.setWeather(args.newShortLocation)
+//        } else {
             // Set using location API
             if (hasCoarseLocationPermission()) {
                 setWeatherWithCurrentLocation()
             } else {
                 requestCoarseLocationPermission()
             }
-        }
+//        }
     }
 
     @SuppressLint("MissingPermission")
@@ -315,8 +351,42 @@ class WeatherFragment : Fragment(), OnItemClickListener,
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
+    private fun getStatusBarHeight(): Int {
+        var result = 0
+        val resourceId = resources.getIdentifier("status_bar_height", "dimen", "android")
+        if (resourceId > 0) {
+            result = resources.getDimensionPixelSize(resourceId)
+        }
+        return result
+    }
+
+    override fun onRefresh() {
+        binding.skeletonLayout.showSkeleton()
+        setViewModelWeather()
+    }
+
+    @SuppressLint("UseRequireInsteadOfGet")
+    override fun onItemClick(v: View?, position: Int) {
+
+
+
+        // Expand clicked daily forecast item
+//        lifecycleScope.launch {
+//            val dailyForecast = viewModel.locationAndWeather.first().second.dailyForecast
+//            for (weather in dailyForecast) {
+//                if (weather.expanded) {
+//                    weather.expanded = false
+//                }
+//            }
+//            dailyForecast[position].expanded = true
+//            dailyForecastAdapter.submitList(dailyForecast)
+//            dailyForecastAdapter.notifyDataSetChanged()
+//        }
+    }
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+        _application = null
     }
 }

@@ -4,6 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.squareup.moshi.JsonClass
 
+@JsonClass(generateAdapter = true)
 data class ShortLocation(
     val name: String,
     val populatedPlace: String,
@@ -44,4 +45,5 @@ data class ShortLocation(
     }
 }
 
+@JsonClass(generateAdapter = true)
 data class Coords(val latitude: Double, val longitude: Double)

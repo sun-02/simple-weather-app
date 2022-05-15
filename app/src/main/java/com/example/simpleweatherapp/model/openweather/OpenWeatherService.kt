@@ -1,5 +1,6 @@
 package com.example.simpleweatherapp.model.openweather
 
+import com.example.simpleweatherapp.BuildConfig
 import com.example.simpleweatherapp.Config
 import retrofit2.Response
 import retrofit2.http.GET
@@ -11,7 +12,7 @@ interface OpenWeatherService {
         @Query("lat") latitude: Double,
         @Query("lon") longitude: Double,
         @Query("units") unitSystem: UnitSystem,
-        @Query("appid") appId: String,
-        @Query("exclude") exclude: String = "minutely,alerts"
+        @Query("exclude") exclude: String = "minutely,alerts",
+        @Query("appid") appId: String = BuildConfig.OPENWEATHER_KEY
     ): Response<OneCallWeather>
 }

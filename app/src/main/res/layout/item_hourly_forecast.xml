@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/tv_hour"
@@ -14,15 +13,14 @@
         android:text="@string/hourly_forecast_hour_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color_semitransparent"
-        android:textSize="@dimen/font_small_plus" />
+        android:textSize="@dimen/font_small_plus"
+        tools:ignore="TextContrastCheck" />
 
     <ImageView
         android:id="@+id/iv_weather"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/weather_image_height"
-        android:layout_margin="@dimen/margin_tiny_plus"
-        android:layout_marginStart="@dimen/margin_medium"
-        android:layout_marginEnd="@dimen/margin_medium"
+        android:layout_width="@dimen/item_hourly_view_width"
+        android:layout_height="@dimen/item_hourly_view_height"
+        android:layout_margin="@dimen/margin_medium"
         android:contentDescription="@string/hourly_forecast_icon_description"
         app:srcCompat="@drawable/ic_09d_96"
         tools:ignore="ImageContrastCheck" />
@@ -34,7 +32,6 @@
         android:text="@string/hourly_forecast_temperature_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color"
-        android:textSize="@dimen/font_medium_plus" />
-
+        android:textSize="@dimen/font_medium" />
 
 </LinearLayout>

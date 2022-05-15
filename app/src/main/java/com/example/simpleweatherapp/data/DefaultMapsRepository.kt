@@ -14,7 +14,7 @@ class DefaultMapsRepository(
     override suspend fun getLocationByCoords(
         latitude: Double,
         longitude: Double
-    ): Result<ShortLocation> {
+    ): Result<List<ShortLocation>> {
         return mapsDataSource.fetchLocationByCoords(latitude, longitude)
     }
 }

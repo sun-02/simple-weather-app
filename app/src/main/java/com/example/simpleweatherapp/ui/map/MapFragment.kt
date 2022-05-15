@@ -14,16 +14,20 @@ import com.microsoft.maps.*
 
 
 class MapFragment : Fragment(), View.OnClickListener {
-    private lateinit var binding: FragmentMapBinding
+    private var _binding: FragmentMapBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var mapView: MapView
+
     private lateinit var pinLayer: MapElementLayer
+
     private val LAKE_WASHINGTON = Geopoint(47.609466, -122.265185)
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMapBinding.inflate(inflater, container, false)
+        _binding = FragmentMapBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -164,7 +168,12 @@ class MapFragment : Fragment(), View.OnClickListener {
     }
 
     private fun navigateToSearchFragment() {
-        val action = MapFragmentDirections.actionMapFragmentToSearchFragment()
-        findNavController().navigate(action)
+//        val action = MapFragmentDirections.actionMapFragmentToSearchFragment()
+//        findNavController().navigate(action)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

@@ -22,7 +22,9 @@ class SearchFragment : Fragment(), TextWatcher, OnItemClickListener {
         val application = requireContext().applicationContext as SimpleWeatherApplication
         SearchViewModelFactory(application.mapsRepository)
     }
-    private lateinit var binding: FragmentSearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
+
     private lateinit var locationsListAdapter: LocationsListAdapter
     private lateinit var shortLocations: List<ShortLocation>
 
@@ -30,7 +32,7 @@ class SearchFragment : Fragment(), TextWatcher, OnItemClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentSearchBinding.inflate(inflater, container, false)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -91,6 +93,11 @@ class SearchFragment : Fragment(), TextWatcher, OnItemClickListener {
 
     override fun onItemClick(view: View?, position: Int) {
         TODO("Not yet implemented")
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

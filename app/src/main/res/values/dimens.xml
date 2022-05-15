@@ -2,6 +2,7 @@
 <resources>
     <!-- General sizes-->
     <dimen name="min_height">48dp</dimen>
+    <dimen name="big_picture_size">168dp</dimen>
 
     <!-- Margins -->
     <dimen name="fab_margin">16dp</dimen>
@@ -26,10 +27,14 @@
     <dimen name="appbar_title_elevation">6dp</dimen>
 
     <!-- Hourly Forecast -->
-    <dimen name="weather_image_height">36dp</dimen>
+    <dimen name="item_hourly_view_height">36dp</dimen>
+    <dimen name="item_hourly_view_width">44dp</dimen>
 
     <!-- Daily forecast -->
-    <dimen name="daily_temp_width">38dp</dimen>
+    <dimen name="daily_icon_height">36dp</dimen>
+    <dimen name="daily_temp_width">44dp</dimen>
+    <dimen name="daily_contracted_height">52dp</dimen>
+    <dimen name="daily_expanded_height">140dp</dimen>
     <dimen name="daily_expanded_width">70dp</dimen>
 
 

@@ -25,7 +25,7 @@ class WeatherViewModelFactory(
         handle: SavedStateHandle
     ) = with(modelClass) {
         when {
-            isAssignableFrom(SearchViewModel::class.java) ->
+            isAssignableFrom(WeatherViewModel::class.java) ->
                 WeatherViewModel(
                     mapsRepository,
                     weatherRepository,

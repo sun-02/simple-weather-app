@@ -22,7 +22,7 @@ class RemoteMapsDataSource(
     suspend fun fetchLocationByCoords(
         latitude: Double,
         longitude: Double
-    ): Result<ShortLocation> = DataUtils.getResponse(
+    ): Result<List<ShortLocation>> = DataUtils.getResponse(
             { service.fetchLocationByCoords(latitude, longitude) },
             "Failed to fetch location by coordinates",
             "Location fetch by coordinates caused an exception",

@@ -85,7 +85,7 @@ class WeatherViewModel(
     private suspend fun getLocationByCoords(
         latitude: Double,
         longitude: Double
-    ): ShortLocation? = mapsRepository.getLocationByCoords(latitude, longitude).unbox()
+    ): ShortLocation? = mapsRepository.getLocationByCoords(latitude, longitude).unbox()?.get(0)
 }
 //ShortLocation(
 //"London, London, United Kingdom",

@@ -1,6 +1,13 @@
 package com.example.simpleweatherapp.util
 
+import android.content.Context
+import android.text.Spannable
+import android.text.SpannableString
+import android.text.style.ForegroundColorSpan
 import android.util.ArrayMap
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.content.ContextCompat.getColor
+import com.example.simpleweatherapp.R
 
 fun <T : Comparable<T>, U> getResFromRange(
     rangeToResourceMap: ArrayMap<ClosedRange<T>, U>,
@@ -13,3 +20,24 @@ fun <T : Comparable<T>, U> getResFromRange(
     }
     return null
 }
+
+fun intToSignedString(value: Int): String {
+    val sign = if (value > 0) "+" else ""
+    return "${sign}${value}"
+}
+
+fun paintStartValue(text: String, signedValue: String, color: Int) =
+    SpannableString(text).apply {
+        setSpan(
+            ForegroundColorSpan(color),
+            0, signedValue.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    }
+
+fun paintEndValue(text: String, signedValue: String, color: Int) =
+    SpannableString(text).apply {
+        setSpan(
+            ForegroundColorSpan(color),
+            text.length - signedValue.length - 1, text.length,
+            Spannable.SPAN_EXCLUSIVE_EXCLUSIVE)
+    }
