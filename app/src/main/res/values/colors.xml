@@ -62,6 +62,7 @@
     <color name="text_color_semitransparent">#7F000000</color>
     <color name="divider">#40000000</color>
     <color name="error">#BA1B1B</color>
+    <color name="red">#F51515</color>
     <color name="text_on_white_disabled">#80000000</color>
     <color name="text_on_black_disabled">#80FFFFFF</color>
     <color name="icons">#1C1B1F</color>

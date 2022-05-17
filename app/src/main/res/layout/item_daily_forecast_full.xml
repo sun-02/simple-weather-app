@@ -1,0 +1,349 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/iv_daily_weather"
+        android:layout_width="@dimen/big_picture_size"
+        android:layout_height="@dimen/big_picture_size"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:contentDescription="@string/weather_image"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/clear_sky_01d"
+        tools:ignore="ImageContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_daily_morning_label"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/daily_forecast_morning_label"
+        android:textAlignment="center"
+        android:textColor="@color/text_color_semitransparent"
+        android:textSize="@dimen/font_small"
+        app:layout_constraintEnd_toStartOf="@id/tv_daily_day_label"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/iv_daily_weather"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_daily_day_label"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/daily_forecast_day_label"
+        android:textAlignment="center"
+        android:textColor="@color/text_color_semitransparent"
+        android:textSize="@dimen/font_small"
+        app:layout_constraintEnd_toStartOf="@id/tv_daily_evening_label"
+        app:layout_constraintStart_toEndOf="@id/tv_daily_morning_label"
+        app:layout_constraintTop_toBottomOf="@id/iv_daily_weather"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_daily_evening_label"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/daily_forecast_evening_label"
+        android:textAlignment="center"
+        android:textColor="@color/text_color_semitransparent"
+        android:textSize="@dimen/font_small"
+        app:layout_constraintEnd_toStartOf="@id/tv_daily_night_label"
+        app:layout_constraintStart_toEndOf="@id/tv_daily_day_label"
+        app:layout_constraintTop_toBottomOf="@id/iv_daily_weather"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_daily_night_label"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:text="@string/daily_forecast_night_label"
+        android:textAlignment="center"
+        android:textColor="@color/text_color_semitransparent"
+        android:textSize="@dimen/font_small"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_daily_evening_label"
+        app:layout_constraintTop_toBottomOf="@id/iv_daily_weather"
+        tools:ignore="TextContrastCheck" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_tod_labels"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tv_daily_morning_label,tv_daily_day_label,tv_daily_evening_label,tv_daily_night_label"
+        tools:layout_editor_absoluteY="192dp" />
+
+    <TextView
+        android:id="@+id/tv_daily_morning_temp"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/current_temp_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/font_medium"
+        app:layout_constraintEnd_toStartOf="@id/tv_daily_day_temp"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier_tod_labels"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_daily_day_temp"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/current_temp_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/font_medium"
+        app:layout_constraintEnd_toStartOf="@+id/tv_daily_evening_temp"
+        app:layout_constraintStart_toEndOf="@+id/tv_daily_morning_temp"
+        app:layout_constraintTop_toBottomOf="@id/barrier_tod_labels" />
+
+    <TextView
+        android:id="@+id/tv_daily_evening_temp"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/current_temp_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/font_medium"
+        app:layout_constraintEnd_toStartOf="@id/tv_daily_night_temp"
+        app:layout_constraintStart_toEndOf="@id/tv_daily_day_temp"
+        app:layout_constraintTop_toBottomOf="@id/barrier_tod_labels" />
+
+    <TextView
+        android:id="@+id/tv_daily_night_temp"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:text="@string/current_temp_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/font_medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_daily_evening_temp"
+        app:layout_constraintTop_toBottomOf="@id/barrier_tod_labels" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tv_daily_morning_temp,tv_daily_day_temp,tv_daily_evening_temp,tv_daily_night_temp"
+        tools:layout_editor_absoluteY="221dp" />
+
+    <TextView
+        android:id="@+id/tv_daily_feels_like_label"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/daily_feels_like_label"
+        android:textAlignment="center"
+        android:textColor="@color/text_color_semitransparent"
+        android:textSize="@dimen/font_small"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier_temp"
+        tools:ignore="TextContrastCheck" />
+
+    <View
+        android:id="@+id/div_feels_like"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/barrier_thin"
+        android:layout_marginStart="@dimen/margin_tiny_plus"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:background="@color/divider"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toBottomOf="@id/tv_daily_feels_like_label"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_daily_feels_like_label"
+        app:layout_constraintTop_toTopOf="@id/tv_daily_feels_like_label"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_feels_like_morning_temp"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/current_temp_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color_semitransparent"
+        android:textSize="@dimen/font_medium"
+        app:layout_constraintEnd_toStartOf="@id/tv_feels_like_day_temp"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tv_daily_feels_like_label"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_feels_like_day_temp"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/current_temp_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color_semitransparent"
+        android:textSize="@dimen/font_medium"
+        app:layout_constraintEnd_toStartOf="@+id/tv_feels_like_evening_temp"
+        app:layout_constraintStart_toEndOf="@+id/tv_feels_like_morning_temp"
+        app:layout_constraintTop_toBottomOf="@id/tv_daily_feels_like_label"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_feels_like_evening_temp"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:text="@string/current_temp_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color_semitransparent"
+        android:textSize="@dimen/font_medium"
+        app:layout_constraintEnd_toStartOf="@id/tv_feels_like_night_temp"
+        app:layout_constraintStart_toEndOf="@id/tv_feels_like_day_temp"
+        app:layout_constraintTop_toBottomOf="@id/tv_daily_feels_like_label"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_feels_like_night_temp"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:text="@string/current_temp_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color_semitransparent"
+        android:textSize="@dimen/font_medium"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_feels_like_evening_temp"
+        app:layout_constraintTop_toBottomOf="@id/tv_daily_feels_like_label"
+        tools:ignore="TextContrastCheck" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_feels_like_temp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tv_feels_like_morning_temp,tv_feels_like_day_temp,tv_feels_like_evening_temp,tv_feels_like_night_temp"
+        tools:layout_editor_absoluteY="251dp" />
+
+    <View
+        android:id="@+id/div_all_temp"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/barrier_thick"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:background="@color/divider"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier_feels_like_temp"
+        tools:visibility="visible" />
+
+    <TextView
+        android:id="@+id/tv_daily_wind"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:drawablePadding="@dimen/margin_tiny_plus"
+        android:text="@string/current_wind_speed_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color_semitransparent"
+        android:textSize="@dimen/font_small_plus"
+        app:drawableTopCompat="@drawable/ic_wind_24dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_daily_humidity"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/div_all_temp"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_daily_wind_deg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/current_wind_deg_stub"
+        android:textColor="@color/text_color_semitransparent"
+        android:textSize="@dimen/font_small_plus"
+        app:drawableLeftCompat="@drawable/ic_arrow_rotate"
+        app:layout_constraintEnd_toEndOf="@+id/tv_daily_wind"
+        app:layout_constraintStart_toStartOf="@id/tv_daily_wind"
+        app:layout_constraintTop_toBottomOf="@id/tv_daily_wind"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_daily_humidity"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:drawablePadding="@dimen/margin_tiny_plus"
+        android:text="@string/current_humidity_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color_semitransparent"
+        android:textSize="@dimen/font_small_plus"
+        app:drawableTopCompat="@drawable/ic_humidity_24dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_daily_pressure"
+        app:layout_constraintStart_toEndOf="@+id/tv_daily_wind"
+        app:layout_constraintTop_toBottomOf="@id/div_all_temp"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_daily_pressure"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:drawablePadding="@dimen/margin_tiny_plus"
+        android:text="@string/current_pressure_newline_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color_semitransparent"
+        android:textSize="@dimen/font_small_plus"
+        app:drawableTopCompat="@drawable/ic_pressure_24dp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_daily_uvi"
+        app:layout_constraintStart_toEndOf="@+id/tv_daily_humidity"
+        app:layout_constraintTop_toBottomOf="@id/div_all_temp"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_daily_uvi"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:drawablePadding="@dimen/margin_tiny_plus"
+        android:text="@string/current_uvi_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color_semitransparent"
+        android:textSize="@dimen/font_small_plus"
+        app:drawableTopCompat="@drawable/ic_uvi_1_2_24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_daily_pressure"
+        app:layout_constraintTop_toBottomOf="@id/div_all_temp"
+        tools:ignore="TextContrastCheck" />
+
+    <androidx.constraintlayout.widget.Barrier
+        android:id="@+id/barrier_weather_details"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:barrierDirection="bottom"
+        app:constraint_referenced_ids="tv_daily_wind_deg,tv_daily_humidity,tv_daily_pressure,tv_daily_uvi"
+        tools:layout_editor_absoluteY="336dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

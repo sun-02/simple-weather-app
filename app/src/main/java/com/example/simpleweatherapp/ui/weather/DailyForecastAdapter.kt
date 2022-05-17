@@ -22,6 +22,7 @@ import com.example.simpleweatherapp.util.getResFromRange
 import com.example.simpleweatherapp.util.intToSignedString
 import com.example.simpleweatherapp.util.paintEndValue
 import com.example.simpleweatherapp.util.paintStartValue
+import java.time.DayOfWeek
 
 
 class DailyForecastAdapter(
@@ -54,6 +55,9 @@ class DailyForecastAdapter(
     ): DailyForecastViewHolder {
         return DailyForecastViewHolder(
             ItemDailyForecastBinding.inflate(LayoutInflater.from(parent.context)),
+            weatherIconsRes,
+            uviIconsRes,
+            windDirections,
             listener
         )
     }
@@ -62,109 +66,85 @@ class DailyForecastAdapter(
         holder: DailyForecastViewHolder,
         position: Int
     ) {
-        val df = getItem(position)
-
-        val dowFormatted = df.date.format(dowFormatter)
-
-        val dateFormatted = df.date.format(dateFormatter)
-
-        val weatherIconRes =
-            weatherIconsRes[df.weatherIcon]?.get(1) ?: R.drawable.ic_unavailable
-
-        val tempDay = df.dayTemp.toInt()
-        val tempDayFormatted = holder.itemView.context
-            .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempDay))
-
-        val tempNight = df.nightTemp.toInt()
-        val tempNightFormatted = holder.itemView.context
-            .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempNight))
-
-        val textColor = ContextCompat.getColor(holder.itemView.context, R.color.text_color)
-
-        val wind = df.windSpeed.toInt().toString()
-        val windFormatted = holder.itemView.context
-            .getString(R.string.wind_speed_formatted, wind)
-        val windSpanned = paintStartValue(windFormatted, wind, textColor)
-        val windDirText = getResFromRange(windDirections, df.windDeg) ?: "N/A"
-        val windArrow = AppCompatResources.getDrawable(
-            holder.itemView.context, R.drawable.ic_arrow_rotate
-        )!!
-        windArrow.level = (df.windDeg * Const.DEGREE_TO_LEVEL_COEF).toInt()
-
-        val humidity = df.humidity.toString()
-        val humidityFormatted = holder.itemView.context
-            .getString(R.string.humidity_formatted, humidity, "%")
-        val humiditySpanned = paintStartValue(humidityFormatted, humidity, textColor)
-
-        val pressure = df.pressure.toString()
-        val pressureFormatted = holder.itemView.context
-            .getString(R.string.pressure_formatted, pressure)
-        val pressureSpanned = paintStartValue(pressureFormatted, pressure, textColor)
-
-        val uvi = df.uvi.toInt().toString()
-        val uviFormatted = holder.itemView.context
-            .getString(R.string.uvi_formatted, uvi)
-        val uviSpanned = paintEndValue(uviFormatted, uvi, textColor)
-        val uviIconRes = getResFromRange(uviIconsRes, df.uvi) ?: R.drawable.ic_unavailable
-        val uviIcon = AppCompatResources.getDrawable(holder.itemView.context, uviIconRes)
-
-//        val groupVisibility = if (df.expanded) {
-//            View.VISIBLE
-//        } else {
-//            View.GONE
-//        }
-//
-//        val alpha = if (df.expanded) {
-//            1.0f
-//        } else {
-//            0.0f
-//        }
-
-//        val layoutHeightRes = if (df.expanded) {
-//            R.dimen.daily_expanded_height
-//        } else {
-//            R.dimen.daily_contracted_height
-//        }
-//        val layoutHeightPix =
-//            holder.itemView.context.resources.getDimensionPixelSize(layoutHeightRes)
-
-        holder.bind(
-            dowFormatted, dateFormatted, weatherIconRes, tempDayFormatted, tempNightFormatted,
-            windSpanned, windDirText, windArrow, humiditySpanned, pressureSpanned, uviSpanned,
-            uviIcon!!
-        )
+        val dailyForecast = getItem(position)
+        holder.bind(dailyForecast)
     }
 
     class DailyForecastViewHolder(
         private val binding: ItemDailyForecastBinding,
+        private val weatherIconsRes: ArrayMap<String, List<Int>>,
+        private val uviIconsRes: ArrayMap<ClosedRange<Double>, Int>,
+        private val windDirections: ArrayMap<ClosedRange<Int>, String>,
         private val listener: OnItemClickListener
     ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
         fun bind(
-            dowFormatted: String,
-            dateFormatted: String,
-            weatherIconRes: Int,
-            tempDayFormatted: String,
-            tempNightFormatted: String,
-            windSpanned: Spannable,
-            windDegText: String,
-            windArrow: Drawable,
-            humiditySpanned: Spannable,
-            pressureSpanned: Spannable,
-            uviSpanned: Spannable,
-            uviIcon: Drawable,
-//            groupVisibility: Int,
-//            groupAlpha: Float
-//            layoutHeightPix: Int
+            df: DailyForecast
         ) {
+            val redColor = ContextCompat.getColor(itemView.context, R.color.red)
+            val textColor = ContextCompat.getColor(itemView.context, R.color.text_color)
+
+            val dowFormatted = when (position) {
+                0 -> itemView.context.getString(R.string.today)
+                1 -> itemView.context.getString(R.string.tomorrow)
+                else -> df.date.format(dowFormatter)
+            }
+            val dowSpanned = if(
+                df.date.dayOfWeek == DayOfWeek.SATURDAY || df.date.dayOfWeek == DayOfWeek.SUNDAY
+            ) {
+                paintStartValue(dowFormatted, dowFormatted, redColor)
+            } else {
+                paintStartValue(dowFormatted, dowFormatted, textColor)
+            }
+
+            val dateFormatted = df.date.format(dateFormatter)
+
+            val weatherIconRes =
+                weatherIconsRes[df.weatherIcon]?.get(1) ?: R.drawable.ic_unavailable
+
+            val tempDay = df.dayTemp.toInt()
+            val tempDayFormatted = itemView.context
+                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempDay))
+
+            val tempNight = df.nightTemp.toInt()
+            val tempNightFormatted = itemView.context
+                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempNight))
+
+            val wind = df.windSpeed.toInt().toString()
+            val windFormatted = itemView.context
+                .getString(R.string.wind_speed_formatted, wind)
+            val windSpanned = paintStartValue(windFormatted, wind, textColor)
+            val windDirText = getResFromRange(windDirections, df.windDeg) ?: "N/A"
+            val windArrow = AppCompatResources.getDrawable(
+                itemView.context, R.drawable.ic_arrow_rotate
+            )!!
+            windArrow.level = (df.windDeg * Const.DEGREE_TO_LEVEL_COEF).toInt()
+
+            val humidity = df.humidity.toString()
+            val humidityFormatted = itemView.context
+                .getString(R.string.humidity_formatted, humidity, "%")
+            val humiditySpanned = paintStartValue(humidityFormatted, humidity, textColor)
+
+            val pressure = df.pressure.toString()
+            val pressureFormatted = itemView.context
+                .getString(R.string.pressure_formatted, pressure)
+            val pressureSpanned = paintStartValue(pressureFormatted, pressure, textColor)
+
+            val uvi = df.uvi.toInt().toString()
+            val uviFormatted = itemView.context
+                .getString(R.string.uvi_formatted, uvi)
+            val uviSpanned = paintEndValue(uviFormatted, uvi, textColor)
+            val uviIconRes = getResFromRange(uviIconsRes, df.uvi) ?: R.drawable.ic_unavailable
+            val uviIcon = AppCompatResources.getDrawable(itemView.context, uviIconRes)
+
             binding.apply {
-                tvDow.text = dowFormatted
+                tvDow.text = dowSpanned
                 tvDate.text = dateFormatted
                 ivWeather.setImageResource(weatherIconRes)
                 tvTempDay.text = tempDayFormatted
                 tvTempNight.text = tempNightFormatted
                 tvWind.text = windSpanned
-                tvWindDeg.text = windDegText
+                tvWindDeg.text = windDirText
                 tvWindDeg.setCompoundDrawablesWithIntrinsicBounds(
                     windArrow, null, null, null)
                 tvHumidity.text = humiditySpanned
@@ -172,42 +152,12 @@ class DailyForecastAdapter(
                 tvUvi.setCompoundDrawablesWithIntrinsicBounds(
                     null, uviIcon, null, null)
                 tvUvi.text = uviSpanned
-                root.tag = false
-//                expandableGroup.animate().setDuration(500L).alpha(groupAlpha)
-
-
-
             }
             itemView.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {
-//            listener.onItemClick(v, layoutPosition)
-
-
-            val itemDailyRoot = v!!
-//            val layoutHeightRes =
-//
-//            val layoutHeightPix =
-//                itemDailyRoot.context.resources.getDimensionPixelSize(layoutHeightRes)
-//
-//            val layoutParams = itemDailyRoot.layoutParams
-//            layoutParams.height = layoutHeightPix
-//            itemDailyRoot.layoutParams = layoutParams
-
-            binding.expandableGroup.apply {
-                if (itemDailyRoot.tag as Boolean) {
-                    animate().setDuration(1000).alpha(0.0f)
-//                    visibility = View.GONE
-                } else {
-                    visibility = View.VISIBLE
-                }
-            }
-
-
-
-
-            itemDailyRoot.tag = !(itemDailyRoot.tag as Boolean)
+            listener.onItemClick(v, layoutPosition)
         }
     }
 }

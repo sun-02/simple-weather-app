@@ -9,6 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.simpleweatherapp.R
 import com.example.simpleweatherapp.databinding.ItemHourlyForecastBinding
 import com.example.simpleweatherapp.model.openweather.HourlyForecast
+import com.example.simpleweatherapp.util.intToSignedString
 import java.time.format.DateTimeFormatter
 
 class HourlyForecastAdapter(
@@ -34,10 +35,14 @@ class HourlyForecastAdapter(
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(hourlyForecast: HourlyForecast, weatherIconRes: Int) {
+            val temp = hourlyForecast.temp.toInt()
+            val tempFormatted = itemView.context
+                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(temp))
+
             binding.apply {
                 tvHour.text = hourlyForecast.time.format(formatter)
                 ivWeather.setImageResource(weatherIconRes)
-                tvTemp.text = hourlyForecast.temp.toString()
+                tvTemp.text = tempFormatted
             }
         }
     }

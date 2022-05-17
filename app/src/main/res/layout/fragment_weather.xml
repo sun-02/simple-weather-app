@@ -130,7 +130,6 @@
                         android:id="@+id/current_temp_n_weather_stub"
                         android:layout_width="@dimen/big_picture_size"
                         android:layout_height="@dimen/big_picture_size"
-
                         app:layout_constraintBottom_toBottomOf="@+id/iv_weather"
                         app:layout_constraintEnd_toEndOf="@id/tv_current_temp"
                         app:layout_constraintStart_toStartOf="@id/tv_current_temp"
@@ -245,9 +244,9 @@
                         tools:ignore="TextContrastCheck" />
 
                     <View
-                        android:id="@+id/div_top"
+                        android:id="@+id/div_feels_like"
                         android:layout_width="match_parent"
-                        android:layout_height="2dp"
+                        android:layout_height="@dimen/barrier_thick"
                         android:layout_marginTop="@dimen/margin_medium"
                         android:background="@color/divider"
                         android:visibility="invisible"
@@ -266,7 +265,7 @@
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/div_top"
+                        app:layout_constraintTop_toBottomOf="@id/div_feels_like"
                         tools:ignore="SpeakableTextPresentCheck"
                         tools:listitem="@layout/item_hourly_forecast"
                         tools:visibility="visible" />
@@ -281,7 +280,7 @@
                         android:layout_marginTop="@dimen/margin_medium"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/div_top"
+                        app:layout_constraintTop_toBottomOf="@id/div_feels_like"
                         tools:visibility="visible" />
 
                     <androidx.constraintlayout.widget.Barrier
@@ -294,7 +293,7 @@
                     <View
                         android:id="@+id/div_bottom"
                         android:layout_width="match_parent"
-                        android:layout_height="2dp"
+                        android:layout_height="@dimen/barrier_thick"
                         android:layout_marginTop="@dimen/margin_medium"
                         android:background="@color/divider"
                         android:visibility="invisible"
@@ -311,7 +310,7 @@
                         android:layout_marginTop="@dimen/margin_medium"
                         android:text="@string/daily_forecast_date_header"
                         android:textColor="@color/text_color"
-                        android:textSize="@dimen/font_small_plus"
+                        android:textSize="@dimen/font_medium"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/div_bottom"
                         tools:ignore="TextContrastCheck" />
@@ -345,7 +344,7 @@
                     <View
                         android:id="@+id/div_daily_forecast"
                         android:layout_width="match_parent"
-                        android:layout_height="1dp"
+                        android:layout_height="@dimen/barrier_thin"
                         android:layout_marginStart="@dimen/margin_medium"
                         android:layout_marginTop="@dimen/margin_tiny_plus"
                         android:layout_marginEnd="@dimen/margin_medium"

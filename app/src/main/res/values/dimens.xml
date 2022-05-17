@@ -3,6 +3,8 @@
     <!-- General sizes-->
     <dimen name="min_height">48dp</dimen>
     <dimen name="big_picture_size">168dp</dimen>
+    <dimen name="barrier_thin">1dp</dimen>
+    <dimen name="barrier_thick">2dp</dimen>
 
     <!-- Margins -->
     <dimen name="fab_margin">16dp</dimen>
@@ -36,6 +38,7 @@
     <dimen name="daily_contracted_height">52dp</dimen>
     <dimen name="daily_expanded_height">140dp</dimen>
     <dimen name="daily_expanded_width">70dp</dimen>
+    <dimen name="tab_size">32dp</dimen>
 
 
 </resources>
