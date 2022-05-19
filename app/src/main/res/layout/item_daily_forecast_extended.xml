@@ -15,7 +15,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/clear_sky_01d"
+        app:srcCompat="@drawable/im_01d_clear_sky_336px"
         tools:ignore="ImageContrastCheck" />
 
     <TextView
@@ -91,7 +91,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginTop="@dimen/margin_medium"
-        android:text="@string/current_temp_stub"
+        android:text="@string/temp_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color"
         android:textSize="@dimen/font_medium"
@@ -106,7 +106,7 @@
         android:layout_width="@dimen/daily_expanded_width"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
-        android:text="@string/current_temp_stub"
+        android:text="@string/temp_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color"
         android:textSize="@dimen/font_medium"
@@ -119,7 +119,7 @@
         android:layout_width="@dimen/daily_expanded_width"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
-        android:text="@string/current_temp_stub"
+        android:text="@string/temp_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color"
         android:textSize="@dimen/font_medium"
@@ -133,7 +133,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
         android:layout_marginEnd="@dimen/margin_medium"
-        android:text="@string/current_temp_stub"
+        android:text="@string/temp_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color"
         android:textSize="@dimen/font_medium"
@@ -164,75 +164,73 @@
         tools:ignore="TextContrastCheck" />
 
     <View
-        android:id="@+id/div_feels_like"
+        android:id="@+id/div_daily_feels_like_label"
         android:layout_width="0dp"
         android:layout_height="@dimen/barrier_thin"
         android:layout_marginStart="@dimen/margin_tiny_plus"
         android:layout_marginEnd="@dimen/margin_medium"
         android:background="@color/divider"
-        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="@id/tv_daily_feels_like_label"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/tv_daily_feels_like_label"
-        app:layout_constraintTop_toTopOf="@id/tv_daily_feels_like_label"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toTopOf="@id/tv_daily_feels_like_label" />
 
     <TextView
-        android:id="@+id/tv_feels_like_morning_temp"
+        android:id="@+id/tv_feels_like_morning"
         android:layout_width="@dimen/daily_expanded_width"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginTop="@dimen/margin_medium"
-        android:text="@string/current_temp_stub"
+        android:text="@string/temp_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color_semitransparent"
         android:textSize="@dimen/font_medium"
-        app:layout_constraintEnd_toStartOf="@id/tv_feels_like_day_temp"
+        app:layout_constraintEnd_toStartOf="@id/tv_feels_like_day"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tv_daily_feels_like_label"
         tools:ignore="TextContrastCheck" />
 
     <TextView
-        android:id="@+id/tv_feels_like_day_temp"
+        android:id="@+id/tv_feels_like_day"
         android:layout_width="@dimen/daily_expanded_width"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
-        android:text="@string/current_temp_stub"
+        android:text="@string/temp_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color_semitransparent"
         android:textSize="@dimen/font_medium"
-        app:layout_constraintEnd_toStartOf="@+id/tv_feels_like_evening_temp"
-        app:layout_constraintStart_toEndOf="@+id/tv_feels_like_morning_temp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_feels_like_evening"
+        app:layout_constraintStart_toEndOf="@+id/tv_feels_like_morning"
         app:layout_constraintTop_toBottomOf="@id/tv_daily_feels_like_label"
         tools:ignore="TextContrastCheck" />
 
     <TextView
-        android:id="@+id/tv_feels_like_evening_temp"
+        android:id="@+id/tv_feels_like_evening"
         android:layout_width="@dimen/daily_expanded_width"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
-        android:text="@string/current_temp_stub"
+        android:text="@string/temp_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color_semitransparent"
         android:textSize="@dimen/font_medium"
-        app:layout_constraintEnd_toStartOf="@id/tv_feels_like_night_temp"
-        app:layout_constraintStart_toEndOf="@id/tv_feels_like_day_temp"
+        app:layout_constraintEnd_toStartOf="@id/tv_feels_like_night"
+        app:layout_constraintStart_toEndOf="@id/tv_feels_like_day"
         app:layout_constraintTop_toBottomOf="@id/tv_daily_feels_like_label"
         tools:ignore="TextContrastCheck" />
 
     <TextView
-        android:id="@+id/tv_feels_like_night_temp"
+        android:id="@+id/tv_feels_like_night"
         android:layout_width="@dimen/daily_expanded_width"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
         android:layout_marginEnd="@dimen/margin_medium"
-        android:text="@string/current_temp_stub"
+        android:text="@string/temp_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color_semitransparent"
         android:textSize="@dimen/font_medium"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/tv_feels_like_evening_temp"
+        app:layout_constraintStart_toEndOf="@id/tv_feels_like_evening"
         app:layout_constraintTop_toBottomOf="@id/tv_daily_feels_like_label"
         tools:ignore="TextContrastCheck" />
 
@@ -241,22 +239,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:barrierDirection="bottom"
-        app:constraint_referenced_ids="tv_feels_like_morning_temp,tv_feels_like_day_temp,tv_feels_like_evening_temp,tv_feels_like_night_temp"
+        app:constraint_referenced_ids="tv_feels_like_morning,tv_feels_like_day,tv_feels_like_evening,tv_feels_like_night"
         tools:layout_editor_absoluteY="251dp" />
 
     <View
-        android:id="@+id/div_all_temp"
+        android:id="@+id/div_daily_all_temp"
         android:layout_width="match_parent"
         android:layout_height="@dimen/barrier_thick"
-        android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginTop="@dimen/margin_medium"
-        android:layout_marginEnd="@dimen/margin_medium"
         android:background="@color/divider"
-        android:visibility="invisible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/barrier_feels_like_temp"
-        tools:visibility="visible" />
+        app:layout_constraintTop_toBottomOf="@id/barrier_feels_like_temp" />
 
     <TextView
         android:id="@+id/tv_daily_wind"
@@ -265,22 +259,22 @@
         android:layout_marginStart="@dimen/margin_medium"
         android:layout_marginTop="@dimen/margin_medium"
         android:drawablePadding="@dimen/margin_tiny_plus"
-        android:text="@string/current_wind_speed_stub"
+        android:text="@string/wind_speed_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color_semitransparent"
         android:textSize="@dimen/font_small_plus"
         app:drawableTopCompat="@drawable/ic_wind_24dp"
-        app:layout_constraintEnd_toStartOf="@+id/tv_daily_humidity"
         app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintEnd_toStartOf="@+id/tv_daily_humidity"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/div_all_temp"
+        app:layout_constraintTop_toBottomOf="@id/div_daily_all_temp"
         tools:ignore="TextContrastCheck" />
 
     <TextView
         android:id="@+id/tv_daily_wind_deg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/current_wind_deg_stub"
+        android:text="@string/wind_deg_stub"
         android:textColor="@color/text_color_semitransparent"
         android:textSize="@dimen/font_small_plus"
         app:drawableLeftCompat="@drawable/ic_arrow_rotate"
@@ -295,14 +289,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
         android:drawablePadding="@dimen/margin_tiny_plus"
-        android:text="@string/current_humidity_stub"
+        android:text="@string/humidity_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color_semitransparent"
         android:textSize="@dimen/font_small_plus"
         app:drawableTopCompat="@drawable/ic_humidity_24dp"
         app:layout_constraintEnd_toStartOf="@+id/tv_daily_pressure"
         app:layout_constraintStart_toEndOf="@+id/tv_daily_wind"
-        app:layout_constraintTop_toBottomOf="@id/div_all_temp"
+        app:layout_constraintTop_toBottomOf="@id/div_daily_all_temp"
         tools:ignore="TextContrastCheck" />
 
     <TextView
@@ -311,14 +305,14 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_medium"
         android:drawablePadding="@dimen/margin_tiny_plus"
-        android:text="@string/current_pressure_newline_stub"
+        android:text="@string/pressure_newline_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color_semitransparent"
         android:textSize="@dimen/font_small_plus"
         app:drawableTopCompat="@drawable/ic_pressure_24dp"
         app:layout_constraintEnd_toStartOf="@+id/tv_daily_uvi"
         app:layout_constraintStart_toEndOf="@+id/tv_daily_humidity"
-        app:layout_constraintTop_toBottomOf="@id/div_all_temp"
+        app:layout_constraintTop_toBottomOf="@id/div_daily_all_temp"
         tools:ignore="TextContrastCheck" />
 
     <TextView
@@ -328,14 +322,14 @@
         android:layout_marginTop="@dimen/margin_medium"
         android:layout_marginEnd="@dimen/margin_medium"
         android:drawablePadding="@dimen/margin_tiny_plus"
-        android:text="@string/current_uvi_stub"
+        android:text="@string/uvi_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color_semitransparent"
         android:textSize="@dimen/font_small_plus"
         app:drawableTopCompat="@drawable/ic_uvi_1_2_24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/tv_daily_pressure"
-        app:layout_constraintTop_toBottomOf="@id/div_all_temp"
+        app:layout_constraintTop_toBottomOf="@id/div_daily_all_temp"
         tools:ignore="TextContrastCheck" />
 
     <androidx.constraintlayout.widget.Barrier
@@ -345,5 +339,82 @@
         app:barrierDirection="bottom"
         app:constraint_referenced_ids="tv_daily_wind_deg,tv_daily_humidity,tv_daily_pressure,tv_daily_uvi"
         tools:layout_editor_absoluteY="336dp" />
+
+    <View
+        android:id="@+id/div_daily_weather_details"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/barrier_thick"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:background="@color/divider"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/barrier_weather_details" />
+
+    <TextView
+        android:id="@+id/tv_daily_sunrise"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:drawablePadding="@dimen/margin_tiny_plus"
+        android:text="@string/hour_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/font_small_plus"
+        app:drawableTopCompat="@drawable/ic_sunrise_24dp"
+        app:layout_constraintEnd_toStartOf="@id/tv_daily_sunset"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/div_daily_weather_details"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_daily_sunset"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:drawablePadding="@dimen/margin_tiny_plus"
+        android:text="@string/hour_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/font_small_plus"
+        app:drawableTopCompat="@drawable/ic_sunset_24dp"
+        app:layout_constraintEnd_toStartOf="@id/tv_daily_moonrise"
+        app:layout_constraintStart_toEndOf="@id/tv_daily_sunrise"
+        app:layout_constraintTop_toBottomOf="@id/div_daily_weather_details"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_daily_moonrise"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:drawablePadding="@dimen/margin_tiny_plus"
+        android:text="@string/hour_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/font_small_plus"
+        app:drawableTopCompat="@drawable/ic_moonrise_24dp"
+        app:layout_constraintEnd_toStartOf="@id/tv_daily_moonset"
+        app:layout_constraintStart_toEndOf="@id/tv_daily_sunset"
+        app:layout_constraintTop_toBottomOf="@id/div_daily_weather_details"
+        tools:ignore="TextContrastCheck" />
+
+    <TextView
+        android:id="@+id/tv_daily_moonset"
+        android:layout_width="@dimen/daily_expanded_width"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:drawablePadding="@dimen/margin_tiny_plus"
+        android:text="@string/hour_stub"
+        android:textAlignment="center"
+        android:textColor="@color/text_color"
+        android:textSize="@dimen/font_small_plus"
+        app:drawableTopCompat="@drawable/ic_moonset_24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/tv_daily_moonrise"
+        app:layout_constraintTop_toBottomOf="@id/div_daily_weather_details"
+        tools:ignore="TextContrastCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

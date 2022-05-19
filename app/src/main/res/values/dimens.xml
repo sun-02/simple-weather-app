@@ -38,7 +38,8 @@
     <dimen name="daily_contracted_height">52dp</dimen>
     <dimen name="daily_expanded_height">140dp</dimen>
     <dimen name="daily_expanded_width">70dp</dimen>
-    <dimen name="tab_size">32dp</dimen>
+    <dimen name="tab_inner_size">32dp</dimen>
+    <dimen name="tab_size">44dp</dimen>
 
 
 </resources>

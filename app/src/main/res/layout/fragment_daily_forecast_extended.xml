@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/toolbar_layout_daily_forecast"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_beige">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar_daily_forecast"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:title="@string/daily_forecast_label"
+            app:titleTextColor="@color/text_color"
+            android:textAlignment="center"
+            android:elevation="0dp"
+            app:navigationIcon="@drawable/ic_back_24dp"
+            app:titleTextAppearance="@style/ToolbarTitle" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/margin_medium"
+        android:background="@color/light_beige"
+        app:tabMaxWidth="@dimen/tab_size"
+        app:tabPaddingStart="@dimen/margin_tiny_plus"
+        app:tabPaddingEnd="@dimen/margin_tiny_plus"
+        app:tabIndicator="@drawable/ic_tab_indicator"
+        app:tabIndicatorColor="@android:color/transparent"
+        app:tabIndicatorFullWidth="false"
+        app:tabIndicatorAnimationMode="fade"
+        app:tabMode="scrollable" />
+
+    <androidx.viewpager2.widget.ViewPager2
+    android:id="@+id/pager"
+    android:layout_width="match_parent"
+    android:layout_height="0dp"
+    android:layout_weight="1" />
+
+</LinearLayout>

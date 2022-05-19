@@ -10,7 +10,7 @@
         android:id="@+id/tv_hour"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hourly_forecast_hour_stub"
+        android:text="@string/hour_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color_semitransparent"
         android:textSize="@dimen/font_small_plus"
@@ -22,14 +22,14 @@
         android:layout_height="@dimen/item_hourly_view_height"
         android:layout_margin="@dimen/margin_medium"
         android:contentDescription="@string/hourly_forecast_icon_description"
-        app:srcCompat="@drawable/ic_09d_96"
+        app:srcCompat="@drawable/ic_09d_96px"
         tools:ignore="ImageContrastCheck" />
 
     <TextView
         android:id="@+id/tv_temp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/hourly_forecast_temperature_stub"
+        android:text="@string/temp_stub"
         android:textAlignment="center"
         android:textColor="@color/text_color"
         android:textSize="@dimen/font_medium" />

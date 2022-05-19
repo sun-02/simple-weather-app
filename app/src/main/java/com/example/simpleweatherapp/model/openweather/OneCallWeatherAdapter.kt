@@ -1,6 +1,6 @@
-package com.example.simpleweatherapp.model.openweather;
+package com.example.simpleweatherapp.model.openweather
 
-import com.squareup.moshi.FromJson;
+import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson
 import java.time.LocalDate
 import java.time.LocalTime
@@ -28,13 +28,23 @@ class OneCallWeatherAdapter {
             dailyForecast.add(
                 DailyForecast(
                     date = LocalDate.ofEpochDay((offset + dw.dt) / secondsInDay),
+                    mornTemp = dw.temp.morn,
                     dayTemp = dw.temp.day,
+                    eveTemp = dw.temp.eve,
                     nightTemp = dw.temp.night,
+                    mornFeelsLike = dw.feels_like.morn,
+                    dayFeelsLike = dw.feels_like.day,
+                    eveFeelsLike = dw.feels_like.eve,
+                    nightFeelsLike = dw.feels_like.night,
                     pressure = dw.pressure,
                     humidity = dw.humidity,
                     uvi = dw.uvi,
                     windSpeed = dw.wind_speed,
                     windDeg = dw.wind_deg,
+                    sunrise = LocalTime.ofSecondOfDay((offset + dw.sunrise) % secondsInDay),
+                    sunset = LocalTime.ofSecondOfDay((offset + dw.sunset) % secondsInDay),
+                    moonrise = LocalTime.ofSecondOfDay((offset + dw.moonrise) % secondsInDay),
+                    moonset = LocalTime.ofSecondOfDay((offset + dw.moonset) % secondsInDay),
                     weatherIcon = dw.weather[0].icon
                 )
             )

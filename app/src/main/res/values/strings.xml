@@ -8,6 +8,7 @@
     <string name="lorem_ipsum_short">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
     <string name="no_internet_connection">No internet connection</string>
     <string name="weather_unavailable">Weather unavailable</string>
+    <string name="unavailable">"N/A"</string>
 
     <!--  TextView formatted  -->
     <string name="temp_n_dew_point_formatted">%1$s\u00B0</string>
@@ -20,27 +21,25 @@
     <string name="uvi_formatted">UVI %1$s</string>
 
     <!--  TextView stubs  -->
-    <string name="current_temp_stub">-30\u00B0</string>
-    <string name="current_weather_stub">Clear</string>
-    <string name="current_feels_like_stub">Feels like -8\u00B0</string>
-    <string name="current_wind_speed_stub">8 m/s</string>
-    <string name="current_wind_deg_stub">ENE</string>
-    <string name="current_pressure_stub">1007 hPa</string>
-    <string name="current_pressure_newline_stub">1007\nhPa</string>
-    <string name="current_humidity_stub">60%</string>
-    <string name="current_dew_point_stub">7\u00B0</string>
-    <string name="current_visibility_stub">10.0 km</string>
-    <string name="current_uvi_stub">UVI 2</string>
-    <string name="hourly_forecast_hour_stub">08:00</string>
-    <string name="hourly_forecast_temperature_stub">-7\u00B0</string>
-    <string name="daily_forecast_date_stub">March 24</string>
-    <string name="daily_forecast_dow_stub">Tomorrow</string>
-    <string name="daily_forecast_dow_short_stub">Mo</string>
+    <string name="temp_stub">-30\u00B0</string>
+    <string name="weather_stub">Clear</string>
+    <string name="feels_like_stub">Feels like -8\u00B0</string>
+    <string name="wind_speed_stub">8 m/s</string>
+    <string name="wind_deg_stub">ENE</string>
+    <string name="pressure_stub">1007 hPa</string>
+    <string name="pressure_newline_stub">1007\nhPa</string>
+    <string name="humidity_stub">60%</string>
+    <string name="dew_point_stub">7\u00B0</string>
+    <string name="visibility_stub">10.0 km</string>
+    <string name="uvi_stub">UVI 2</string>
+    <string name="hour_stub">08:00</string>
+    <string name="date_stub">March 24</string>
+    <string name="date_short_stub">24</string>
+    <string name="dow_stub">Tomorrow</string>
+    <string name="dow_short_stub">Mon</string>
 
     <!--  Labels  -->
-    <string name="daily_forecast_date_header">Week forecast</string>
-    <string name="daily_forecast_day_temp_header">Day</string>
-    <string name="daily_forecast_night_temp_header">Night</string>
+    <string name="daily_forecast_label">Eight day forecast</string>
     <string name="daily_forecast_morning_label">Morning</string>
     <string name="daily_forecast_day_label">Day</string>
     <string name="daily_forecast_evening_label">Evening</string>
@@ -50,4 +49,22 @@
     <!--  Views description  -->
     <string name="weather_image">Weather image</string>
     <string name="hourly_forecast_icon_description">Hourly forecast weather</string>
+
+    <!-- Wind directions -->
+    <string name="south">"S"</string>
+    <string name="south_south_west">"SSW"</string>
+    <string name="south_west">"SW"</string>
+    <string name="west_south_west">"WSW"</string>
+    <string name="west">"W"</string>
+    <string name="west_north_west">"WNW"</string>
+    <string name="north_west">"NW"</string>
+    <string name="north_north_west">"NNW"</string>
+    <string name="north">"N"</string>
+    <string name="north_north_east">"NNE"</string>
+    <string name="north_east">"NE"</string>
+    <string name="east_north_east">"ENE"</string>
+    <string name="east">"E"</string>
+    <string name="east_south_east">"ESE"</string>
+    <string name="south_east">"SE"</string>
+    <string name="south_south_east">"SSE"</string>
 </resources>

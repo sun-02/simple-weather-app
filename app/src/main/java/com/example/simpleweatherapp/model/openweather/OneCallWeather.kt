@@ -31,13 +31,22 @@ data class HourlyForecast(
 
 data class DailyForecast(
     val date: LocalDate,
+    val mornTemp: Double,
     val dayTemp: Double,
+    val eveTemp: Double,
     val nightTemp: Double,
+    val mornFeelsLike: Double,
+    val dayFeelsLike: Double,
+    val eveFeelsLike: Double,
+    val nightFeelsLike: Double,
     val pressure: Int,
     val humidity: Int,
     val uvi: Double,
     val windSpeed: Double,
     val windDeg: Int,
-    val weatherIcon: String,
-    var expanded: Boolean = false
+    val sunrise: LocalTime,
+    val sunset: LocalTime,
+    val moonrise: LocalTime,
+    val moonset: LocalTime,
+    val weatherIcon: String
 )

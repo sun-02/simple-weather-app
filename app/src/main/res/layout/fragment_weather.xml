@@ -16,15 +16,16 @@
             android:id="@+id/toolbar_layout_weather"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@android:color/transparent">
+            android:background="@color/light_beige">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar_weather"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/appbar_height"
-                android:layout_margin="@dimen/margin_medium"
+                android:layout_height="wrap_content"
                 android:elevation="0dp"
-                app:navigationIcon="@drawable/ic_back_24dp"
+                app:titleTextColor="@color/text_color"
+                android:textAlignment="center"
+                app:navigationIcon="@drawable/ic_drawer_24dp"
                 app:titleTextAppearance="@style/ToolbarTitle" />
 
         </com.google.android.material.appbar.AppBarLayout>
@@ -69,7 +70,7 @@
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="@id/gv_50"
                         app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/clear_sky_01d"
+                        app:srcCompat="@drawable/im_01d_clear_sky_336px"
                         tools:ignore="ImageContrastCheck" />
 
                     <androidx.constraintlayout.widget.Guideline
@@ -85,7 +86,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_medium"
                         android:includeFontPadding="false"
-                        android:text="@string/current_temp_stub"
+                        android:text="@string/temp_stub"
                         android:textAlignment="center"
                         android:textColor="@color/text_color"
                         android:textSize="80sp"
@@ -100,7 +101,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_medium"
-                        android:text="@string/current_weather_stub"
+                        android:text="@string/weather_stub"
                         android:textAlignment="center"
                         android:textColor="@color/text_color"
                         android:textSize="@dimen/font_large"
@@ -115,7 +116,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_medium"
-                        android:text="@string/current_feels_like_stub"
+                        android:text="@string/feels_like_stub"
                         android:textAlignment="center"
                         android:textColor="@color/text_color_semitransparent"
                         android:textSize="@dimen/font_small_plus"
@@ -127,7 +128,7 @@
 
                     <!-- Used to show correct skeleton on fetching data -->
                     <View
-                        android:id="@+id/current_temp_n_weather_stub"
+                        android:id="@+id/current_temp_and_weather_stub"
                         android:layout_width="@dimen/big_picture_size"
                         android:layout_height="@dimen/big_picture_size"
                         app:layout_constraintBottom_toBottomOf="@+id/iv_weather"
@@ -149,7 +150,7 @@
                         android:layout_marginStart="@dimen/margin_medium"
                         android:layout_marginTop="@dimen/margin_medium"
                         android:drawablePadding="@dimen/margin_small"
-                        android:text="@string/current_wind_speed_stub"
+                        android:text="@string/wind_speed_stub"
                         android:textColor="@color/text_color_semitransparent"
                         android:textSize="@dimen/font_medium"
                         app:drawableLeftCompat="@drawable/ic_wind_24dp"
@@ -161,7 +162,7 @@
                         android:id="@+id/tv_current_wind_deg"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/current_wind_deg_stub"
+                        android:text="@string/wind_deg_stub"
                         android:textColor="@color/text_color_semitransparent"
                         android:textSize="@dimen/font_medium"
                         app:drawableLeftCompat="@drawable/ic_arrow_rotate"
@@ -177,7 +178,7 @@
                         android:layout_marginStart="@dimen/margin_medium"
                         android:layout_marginTop="@dimen/margin_medium"
                         android:drawablePadding="@dimen/margin_small"
-                        android:text="@string/current_humidity_stub"
+                        android:text="@string/humidity_stub"
                         android:textColor="@color/text_color_semitransparent"
                         android:textSize="@dimen/font_medium"
                         app:drawableLeftCompat="@drawable/ic_humidity_24dp"
@@ -192,7 +193,7 @@
                         android:layout_marginStart="@dimen/margin_medium"
                         android:layout_marginTop="@dimen/margin_medium"
                         android:drawablePadding="@dimen/margin_small"
-                        android:text="@string/current_pressure_stub"
+                        android:text="@string/pressure_stub"
                         android:textColor="@color/text_color_semitransparent"
                         android:textSize="@dimen/font_medium"
                         app:drawableLeftCompat="@drawable/ic_pressure_24dp"
@@ -206,7 +207,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_medium"
                         android:drawablePadding="@dimen/margin_small"
-                        android:text="@string/current_dew_point_stub"
+                        android:text="@string/dew_point_stub"
                         android:textColor="@color/text_color_semitransparent"
                         android:textSize="@dimen/font_medium"
                         app:drawableLeftCompat="@drawable/ic_dew_point_24dp"
@@ -221,7 +222,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_medium"
                         android:drawablePadding="@dimen/margin_small"
-                        android:text="@string/current_visibility_stub"
+                        android:text="@string/visibility_stub"
                         android:textColor="@color/text_color_semitransparent"
                         android:textSize="@dimen/font_medium"
                         app:drawableLeftCompat="@drawable/ic_visibility_24dp"
@@ -235,7 +236,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/margin_medium"
                         android:drawablePadding="@dimen/margin_small"
-                        android:text="@string/current_uvi_stub"
+                        android:text="@string/uvi_stub"
                         android:textColor="@color/text_color_semitransparent"
                         android:textSize="@dimen/font_medium"
                         app:drawableLeftCompat="@drawable/ic_uvi_1_2_24dp"
@@ -244,16 +245,14 @@
                         tools:ignore="TextContrastCheck" />
 
                     <View
-                        android:id="@+id/div_feels_like"
+                        android:id="@+id/div_daily_weather"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/barrier_thick"
                         android:layout_marginTop="@dimen/margin_medium"
                         android:background="@color/divider"
-                        android:visibility="invisible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tv_current_pressure"
-                        tools:visibility="visible"/>
+                        app:layout_constraintTop_toBottomOf="@id/tv_current_pressure" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_hourly_forecast"
@@ -265,7 +264,7 @@
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/div_feels_like"
+                        app:layout_constraintTop_toBottomOf="@id/div_daily_weather"
                         tools:ignore="SpeakableTextPresentCheck"
                         tools:listitem="@layout/item_hourly_forecast"
                         tools:visibility="visible" />
@@ -280,7 +279,7 @@
                         android:layout_marginTop="@dimen/margin_medium"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/div_feels_like"
+                        app:layout_constraintTop_toBottomOf="@id/div_daily_weather"
                         tools:visibility="visible" />
 
                     <androidx.constraintlayout.widget.Barrier
@@ -291,16 +290,14 @@
                         app:constraint_referenced_ids="rv_hourly_forecast,rv_hourly_forecast_stub" />
 
                     <View
-                        android:id="@+id/div_bottom"
+                        android:id="@+id/div_hourly_forecast"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/barrier_thick"
                         android:layout_marginTop="@dimen/margin_medium"
                         android:background="@color/divider"
-                        android:visibility="invisible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/rv_hourly_forecast_barrier"
-                        tools:visibility="visible"/>
+                        app:layout_constraintTop_toBottomOf="@id/rv_hourly_forecast_barrier" />
 
                     <TextView
                         android:id="@+id/tv_daily_forecast_date_header"
@@ -308,11 +305,11 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_medium"
                         android:layout_marginTop="@dimen/margin_medium"
-                        android:text="@string/daily_forecast_date_header"
+                        android:text="@string/daily_forecast_label"
                         android:textColor="@color/text_color"
                         android:textSize="@dimen/font_medium"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/div_bottom"
+                        app:layout_constraintTop_toBottomOf="@id/div_hourly_forecast"
                         tools:ignore="TextContrastCheck" />
 
                     <TextView
@@ -320,7 +317,7 @@
                         android:layout_width="@dimen/daily_temp_width"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/margin_tiny_plus"
-                        android:text="@string/daily_forecast_day_temp_header"
+                        android:text="@string/daily_forecast_day_label"
                         android:textAlignment="center"
                         android:textColor="@color/text_color_semitransparent"
                         android:textSize="@dimen/font_small"
@@ -333,7 +330,7 @@
                         android:layout_width="@dimen/daily_temp_width"
                         android:layout_height="wrap_content"
                         android:layout_marginEnd="@dimen/margin_medium"
-                        android:text="@string/daily_forecast_night_temp_header"
+                        android:text="@string/daily_forecast_night_label"
                         android:textAlignment="center"
                         android:textColor="@color/text_color_semitransparent"
                         android:textSize="@dimen/font_small"
@@ -342,27 +339,28 @@
                         tools:ignore="TextContrastCheck" />
 
                     <View
-                        android:id="@+id/div_daily_forecast"
+                        android:id="@+id/div_daily_forecast_header"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/barrier_thin"
                         android:layout_marginStart="@dimen/margin_medium"
                         android:layout_marginTop="@dimen/margin_tiny_plus"
                         android:layout_marginEnd="@dimen/margin_medium"
                         android:background="@color/divider"
-                        android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/tv_daily_forecast_date_header"
-                        tools:visibility="visible"/>
+                        app:layout_constraintTop_toBottomOf="@id/tv_daily_forecast_date_header" />
 
                     <!-- Used to show correct skeleton on fetching data -->
-                    <include android:id="@+id/rv_daily_forecast_stub"
-                        android:layout_width="wrap_content"
+                    <include
+                        android:id="@+id/rv_daily_forecast_stub"
+                        layout="@layout/rv_daily_forecast_stub"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        layout="@layout/rv_hourly_forecast_stub"
+                        android:layout_marginStart="@dimen/margin_medium"
+                        android:layout_marginEnd="@dimen/margin_medium"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/div_daily_forecast"/>
+                        app:layout_constraintTop_toBottomOf="@id/div_daily_forecast_header" />
 
                     <androidx.recyclerview.widget.RecyclerView
                         android:id="@+id/rv_daily_forecast"
@@ -375,7 +373,7 @@
                         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@id/div_daily_forecast"
+                        app:layout_constraintTop_toBottomOf="@id/div_daily_forecast_header"
                         tools:itemCount="7"
                         tools:ignore="SpeakableTextPresentCheck"
                         tools:listitem="@layout/item_daily_forecast" />

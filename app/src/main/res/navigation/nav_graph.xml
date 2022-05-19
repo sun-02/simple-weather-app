@@ -23,5 +23,16 @@
         <argument
             android:name="newShortLocation"
             app:argType="com.example.simpleweatherapp.model.bingmaps.ShortLocation" />
+        <action
+            android:id="@+id/action_to_dailyForecastExtendedFragment"
+            app:destination="@id/dailyForecastExtendedFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/dailyForecastExtendedFragment"
+        android:name="com.example.simpleweatherapp.ui.weather.DailyForecastExtendedFragment"
+        android:label="DailyForecastExtendedFragment" >
+        <argument
+            android:name="position"
+            app:argType="integer" />
     </fragment>
 </navigation>
