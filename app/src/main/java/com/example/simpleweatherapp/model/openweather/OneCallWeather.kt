@@ -1,52 +1,85 @@
 package com.example.simpleweatherapp.model.openweather
 
+import androidx.room.ColumnInfo
+import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.PrimaryKey
+import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
 import java.util.*
 
+@Entity(tableName = "one_call_weather")
 data class OneCallWeather(
-    val date: LocalDate,
+    @PrimaryKey  @ColumnInfo(name = "date_time") val dateTime: LocalDateTime,
     val temp: Double,
-    val feelsLike: Double,
+    @ColumnInfo(name = "feels_like") val feelsLike: Double,
     val pressure: Int,
     val humidity: Int,
-    val dewPoint: Double,
+    @ColumnInfo(name = "dew_point") val dewPoint: Double,
     val uvi: Double,
     val visibility: Int,
-    val windSpeed: Double,
-    val windDeg: Int,
-    val weatherTitle: String,
-    val weatherIcon: String,
-    val hourlyForecast: List<HourlyForecast>,
-    val dailyForecast: List<DailyForecast>
-)
+    @ColumnInfo(name = "wind_speed") val windSpeed: Double,
+    @ColumnInfo(name = "wind_deg") val windDeg: Int,
+    @ColumnInfo(name = "weather_title") val weatherTitle: String,
+    @ColumnInfo(name = "weather_icon") val weatherIcon: String,
+    @ColumnInfo(name = "hourly_forecast") val hourlyForecast: List<HourlyForecast>,
+    @ColumnInfo(name = "daily_forecast") val dailyForecast: List<DailyForecast>
+) {
+    var name: String? = null
+    set(value) {
+        if (field == null) {
+            field = value
+        } else {
+            throw IllegalArgumentException("This is single-use setter. Value already has been set.")
+        }
+    }
+}
 
+@Entity(tableName = "hourly_forecast", foreignKeys = arrayOf(
+    ForeignKey(
+        entity = OneCallWeather::class,
+        parentColumns = arrayOf("date_time"),
+        childColumns = arrayOf("parent_date_time"),
+        onDelete = ForeignKey.CASCADE,
+        onUpdate = ForeignKey.CASCADE
+    )))
 data class HourlyForecast(
-    val dateEpoch: Long,
+    @ColumnInfo(name = "parent_date_time") val parentDateTime: LocalDateTime,
+    @ColumnInfo(name = "date_epoch") val dateEpoch: Long,
     val time: LocalTime,
     val temp: Double,
-    val weatherIcon: String
+    @ColumnInfo(name = "weather_icon") val weatherIcon: String
 )
 
+@Entity(tableName = "hourly_forecast", foreignKeys = arrayOf(
+    ForeignKey(
+        entity = OneCallWeather::class,
+        parentColumns = arrayOf("date_time"),
+        childColumns = arrayOf("parent_date_time"),
+        onDelete = ForeignKey.CASCADE,
+        onUpdate = ForeignKey.CASCADE
+    )))
 data class DailyForecast(
+    @ColumnInfo(name = "parent_date_time") val parentDateTime: LocalDateTime,
     val date: LocalDate,
-    val mornTemp: Double,
-    val dayTemp: Double,
-    val eveTemp: Double,
-    val nightTemp: Double,
-    val mornFeelsLike: Double,
-    val dayFeelsLike: Double,
-    val eveFeelsLike: Double,
-    val nightFeelsLike: Double,
+    @ColumnInfo(name = "morn_temp") val mornTemp: Double,
+    @ColumnInfo(name = "day_temp") val dayTemp: Double,
+    @ColumnInfo(name = "eve_temp") val eveTemp: Double,
+    @ColumnInfo(name = "night_temp") val nightTemp: Double,
+    @ColumnInfo(name = "morn_feels_like") val mornFeelsLike: Double,
+    @ColumnInfo(name = "day_feels_like") val dayFeelsLike: Double,
+    @ColumnInfo(name = "eve_feels_like") val eveFeelsLike: Double,
+    @ColumnInfo(name = "night_feels_like") val nightFeelsLike: Double,
     val pressure: Int,
     val humidity: Int,
     val uvi: Double,
-    val windSpeed: Double,
-    val windDeg: Int,
+    @ColumnInfo(name = "wind_speed") val windSpeed: Double,
+    @ColumnInfo(name = "wind_deg") val windDeg: Int,
     val sunrise: LocalTime,
     val sunset: LocalTime,
     val moonrise: LocalTime,
     val moonset: LocalTime,
-    val weatherIcon: String
+    @ColumnInfo(name = "weather_icon") val weatherIcon: String
 )

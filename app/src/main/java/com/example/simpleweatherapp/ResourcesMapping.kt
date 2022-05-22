@@ -1,7 +1,6 @@
-package com.example.simpleweatherapp.util
+package com.example.simpleweatherapp
 
 import android.util.ArrayMap
-import com.example.simpleweatherapp.R
 
 object ResourcesMapping {
     val weatherImagesRes = ArrayMap<String, Int>()

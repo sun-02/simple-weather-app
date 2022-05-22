@@ -1,4 +1,4 @@
-package com.example.simpleweatherapp.data
+package com.example.simpleweatherapp.data.bingmaps
 
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.example.simpleweatherapp.model.Result
@@ -7,11 +7,11 @@ class DefaultMapsRepository(
     private val mapsDataSource: RemoteMapsDataSource
 ) : MapsRepository {
 
-    override suspend fun getLocationsByName(name: String): Result<List<ShortLocation>> {
+    override suspend fun getLocationsList(name: String): Result<List<ShortLocation>> {
         return mapsDataSource.fetchLocationsByName(name)
     }
 
-    override suspend fun getLocationByCoords(
+    override suspend fun getLocation(
         latitude: Double,
         longitude: Double
     ): Result<List<ShortLocation>> {

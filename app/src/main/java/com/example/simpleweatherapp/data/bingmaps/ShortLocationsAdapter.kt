@@ -1,5 +1,8 @@
-package com.example.simpleweatherapp.model.bingmaps
+package com.example.simpleweatherapp.data.bingmaps
 
+import com.example.simpleweatherapp.model.bingmaps.BingMapsResponse
+import com.example.simpleweatherapp.model.bingmaps.ResourceSet
+import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.squareup.moshi.FromJson
 import com.squareup.moshi.ToJson
 
@@ -15,9 +18,8 @@ class ShortLocationsAdapter {
                     bingMapsLocations[i].address.locality,
                     bingMapsLocations[i].address.adminDistrict,
                     bingMapsLocations[i].address.countryRegion,
-                    Coords(bingMapsLocations[i].point.coordinates[0],
-                        bingMapsLocations[i].point.coordinates[1]
-                    )
+                    bingMapsLocations[i].point.coordinates[0],
+                    bingMapsLocations[i].point.coordinates[1]
                 )
             )
         }

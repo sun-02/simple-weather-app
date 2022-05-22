@@ -7,8 +7,12 @@
     <string name="tomorrow">Tomorrow</string>
     <string name="lorem_ipsum_short">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
     <string name="no_internet_connection">No internet connection</string>
-    <string name="weather_unavailable">Weather unavailable</string>
-    <string name="unavailable">"N/A"</string>
+    <string name="weather_unavailable">Weather data unavailable. Check internet connection</string>
+    <string name="unavailable">N/A</string>
+    <string name="retry">retry</string>
+    <string name="refresh">refresh</string>
+    <string name="exit">exit</string>
+    <string name="data_outdated">Weather data is outdated. Check internet connection</string>
 
     <!--  TextView formatted  -->
     <string name="temp_n_dew_point_formatted">%1$s\u00B0</string>
@@ -21,6 +25,7 @@
     <string name="uvi_formatted">UVI %1$s</string>
 
     <!--  TextView stubs  -->
+    <string name="weather_title_stub">London, May 24 - 8:00</string>
     <string name="temp_stub">-30\u00B0</string>
     <string name="weather_stub">Clear</string>
     <string name="feels_like_stub">Feels like -8\u00B0</string>

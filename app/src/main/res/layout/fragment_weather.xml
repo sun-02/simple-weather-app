@@ -23,6 +23,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:elevation="0dp"
+                app:title="@string/weather_title_stub"
                 app:titleTextColor="@color/text_color"
                 android:textAlignment="center"
                 app:navigationIcon="@drawable/ic_drawer_24dp"

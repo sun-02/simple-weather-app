@@ -3,7 +3,7 @@ package com.example.simpleweatherapp.ui.search
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
-import com.example.simpleweatherapp.data.MapsRepository
+import com.example.simpleweatherapp.data.bingmaps.MapsRepository
 import com.example.simpleweatherapp.model.Result
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +22,7 @@ class SearchViewModel(
 
     fun queryLocationByName(name: String) {
         viewModelScope.launch {
-            mapsRepository.getLocationsByName(name).let { result ->
+            mapsRepository.getLocationsList(name).let { result ->
                 if (result is Result.Success) {
                     _locations.value = result.data
                     _mapsApiAvailable.value = true

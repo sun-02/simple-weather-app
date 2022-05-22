@@ -2,7 +2,7 @@ package com.example.simpleweatherapp.ui.search
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.simpleweatherapp.data.MapsRepository
+import com.example.simpleweatherapp.data.bingmaps.MapsRepository
 
 @Suppress("UNCHECKED_CAST")
 class SearchViewModelFactory(

@@ -1,27 +1,18 @@
 package com.example.simpleweatherapp.model
 
-sealed class Result<out R> {
+sealed class Result<T : Any> {
 
-    data class Success<out T>(val data: T) : Result<T>()
-    data class Error(val failure: Failure) : Result<Nothing>()
-    object Loading : Result<Nothing>()
+    class Success<T : Any>(val data: T) : Result<T>()
+    class Error<T : Any>(val status_code: Int = 0,
+                              val status_message: String? = null) : Result<T>()
 
     override fun toString(): String {
         return when (this) {
             is Success<*> -> "Success[data=$data]"
-            is Error -> "Error[failure=$failure]"
-            Loading -> "Loading"
+            is Error<*> -> "Error[status_code=$status_code, status_message=$status_message]"
         }
     }
 }
 
 val Result<*>.succeeded
     get() = this is Result.Success && data != null
-
-fun <T> Result<T>.unbox() : T? {
-    return if (this is Result.Success) {
-        this.data
-    } else {
-        null
-    }
-}

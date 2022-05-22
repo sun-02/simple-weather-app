@@ -14,7 +14,7 @@ import com.example.simpleweatherapp.model.openweather.DailyForecast
 import com.example.simpleweatherapp.R
 import com.example.simpleweatherapp.ui.OnItemClickListener
 import com.example.simpleweatherapp.util.*
-import com.example.simpleweatherapp.util.ResourcesMapping.weatherIconsRes
+import com.example.simpleweatherapp.ResourcesMapping.weatherIconsRes
 import java.time.DayOfWeek
 
 

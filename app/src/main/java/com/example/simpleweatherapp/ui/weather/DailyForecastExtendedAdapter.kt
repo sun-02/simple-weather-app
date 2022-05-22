@@ -11,9 +11,9 @@ import com.example.simpleweatherapp.R
 import com.example.simpleweatherapp.databinding.ItemDailyForecastExtendedBinding
 import com.example.simpleweatherapp.model.openweather.DailyForecast
 import com.example.simpleweatherapp.util.*
-import com.example.simpleweatherapp.util.ResourcesMapping.weatherImagesRes
-import com.example.simpleweatherapp.util.ResourcesMapping.uviIconsRes
-import com.example.simpleweatherapp.util.ResourcesMapping.windDirectionsRes
+import com.example.simpleweatherapp.ResourcesMapping.weatherImagesRes
+import com.example.simpleweatherapp.ResourcesMapping.uviIconsRes
+import com.example.simpleweatherapp.ResourcesMapping.windDirectionsRes
 
 class DailyForecastExtendedAdapter(private val dailyForecastList: List<DailyForecast>) :
     RecyclerView.Adapter<DailyForecastExtendedAdapter.DailyForecastExtendedViewHolder>() {

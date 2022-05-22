@@ -1,7 +1,8 @@
-package com.example.simpleweatherapp.model.bingmaps
+package com.example.simpleweatherapp.data.bingmaps
 
 import com.example.simpleweatherapp.BuildConfig
 import com.example.simpleweatherapp.Config
+import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import retrofit2.Response
 import retrofit2.http.GET
 import retrofit2.http.Path

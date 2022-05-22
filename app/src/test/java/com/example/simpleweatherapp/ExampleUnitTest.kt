@@ -2,16 +2,12 @@ package com.example.simpleweatherapp
 
 import org.junit.Test
 
-import org.junit.Assert.*
-
-import com.example.simpleweatherapp.Config
-import com.example.simpleweatherapp.model.bingmaps.BingMapsResponse
-import com.example.simpleweatherapp.model.bingmaps.BingMapsService
+import com.example.simpleweatherapp.data.bingmaps.BingMapsService
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
-import com.example.simpleweatherapp.model.bingmaps.ShortLocationsAdapter
+import com.example.simpleweatherapp.data.bingmaps.ShortLocationsAdapter
 import com.example.simpleweatherapp.model.openweather.OneCallWeather
-import com.example.simpleweatherapp.model.openweather.OneCallWeatherAdapter
-import com.example.simpleweatherapp.model.openweather.OpenWeatherService
+import com.example.simpleweatherapp.data.openweather.OneCallWeatherAdapter
+import com.example.simpleweatherapp.data.openweather.OpenWeatherService
 import com.example.simpleweatherapp.model.openweather.UnitSystem
 import com.squareup.moshi.Moshi
 import kotlinx.coroutines.runBlocking

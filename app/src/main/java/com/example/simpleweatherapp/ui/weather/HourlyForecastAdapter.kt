@@ -9,9 +9,8 @@ import com.example.simpleweatherapp.DateTimeFormatters.timeFormatter
 import com.example.simpleweatherapp.R
 import com.example.simpleweatherapp.databinding.ItemHourlyForecastBinding
 import com.example.simpleweatherapp.model.openweather.HourlyForecast
-import com.example.simpleweatherapp.util.ResourcesMapping.weatherIconsRes
+import com.example.simpleweatherapp.ResourcesMapping.weatherIconsRes
 import com.example.simpleweatherapp.util.intToSignedString
-import java.time.format.DateTimeFormatter
 
 class HourlyForecastAdapter : ListAdapter<HourlyForecast,
         HourlyForecastAdapter.HourlyForecastViewHolder>(DiffCallback) {

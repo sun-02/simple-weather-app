@@ -2,42 +2,46 @@ package com.example.simpleweatherapp.ui.weather
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.os.Bundle
-import android.util.ArrayMap
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.core.content.ContextCompat.getColor
-import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.*
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.simpleweatherapp.Const
-import com.example.simpleweatherapp.DateTimeFormatters.dateFormatter
+import com.example.simpleweatherapp.DateTimeFormatters.dateTimeFormatter
+import com.example.simpleweatherapp.R
 import com.example.simpleweatherapp.SimpleWeatherApplication
 import com.example.simpleweatherapp.databinding.FragmentWeatherBinding
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.example.simpleweatherapp.model.openweather.OneCallWeather
+import com.example.simpleweatherapp.ui.OnItemClickListener
+import com.example.simpleweatherapp.util.*
+import com.example.simpleweatherapp.ResourcesMapping.uviIconsRes
+import com.example.simpleweatherapp.ResourcesMapping.weatherImagesRes
+import com.example.simpleweatherapp.ResourcesMapping.windDirectionsRes
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.tasks.*
+import com.google.android.material.snackbar.Snackbar
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import kotlinx.coroutines.flow.collect
-import com.example.simpleweatherapp.R
-import com.example.simpleweatherapp.ui.OnItemClickListener
-import com.example.simpleweatherapp.util.*
-import com.example.simpleweatherapp.util.ResourcesMapping.weatherImagesRes
-import com.example.simpleweatherapp.util.ResourcesMapping.uviIconsRes
-import com.example.simpleweatherapp.util.ResourcesMapping.windDirectionsRes
+import timber.log.Timber
+import java.time.LocalTime
+import java.time.temporal.ChronoUnit
+
 
 class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRefreshListener,
-    EasyPermissions.PermissionCallbacks {
+    DialogInterface.OnClickListener, EasyPermissions.PermissionCallbacks {
 
     companion object {
         private const val ACCESS_COARSE_LOCATION_PERMISSIONS_REQUEST = 1
@@ -52,7 +56,7 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
         WeatherViewModelFactory(
             application.mapsRepository,
             application.weatherRepository,
-            requireActivity()
+            this
         )
     }
 
@@ -68,44 +72,67 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentWeatherBinding.inflate(inflater, container, false)
+        Timber.d("Binding initialized")
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        //Set the toolbar top margin with respect of the status bar
-//        (binding.toolbarWeather.layoutParams as ViewGroup.MarginLayoutParams)
-//            .topMargin = binding.toolbarLayoutWeather.marginTop + getStatusBarHeight()
-
+        Timber.d("onViewCreated start")
         binding.toolbarWeather
             .setToolbarLayoutTopMarginWithRespectOfStatusBarHeight(getStatusBarHeight())
-
-        binding.skeletonLayout.showSkeleton()
+        Timber.d("ToolbarLayoutTopMargin setted")
 
         _application = requireContext().applicationContext as SimpleWeatherApplication
 
         lifecycleScope.launchWhenStarted {
             viewModel.isWeatherAvailable.collect { isAvailable ->
-                if (isAvailable) {
-                    showLayout()
-                } else {
-                    hideLayout()
+                if (!isAvailable) {
+                    val dialog = ApiUnavailableDialogFragment()
+                    dialog.setTargetFragment(this@WeatherFragment, 1)
+                    Timber.d("Navigating to ApiUnavailableDialogFragment")
+                    dialog.show(
+                        parentFragmentManager, ApiUnavailableDialogFragment.TAG)
                 }
             }
-
         }
+        Timber.d("Preparing weather UI")
         setupWeather()
-
         lifecycleScope.launchWhenStarted {
             viewModel.locationAndWeather.collect {
-
+                Timber.d("Binding weather UI")
                 bindWeather(it.first, it.second)
-                binding.skeletonLayout.showOriginal()
-                
             }
         }
-        setViewModelWeather()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        Timber.d("Refreshing location and weather")
+        refreshWeather()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        Timber.d("Paused")
+    }
+
+    private fun showLayout() {
+        val views = binding.root.getAllViews()
+        for (v in views) {
+            v.visibility = View.VISIBLE
+        }
+        binding.tvWeatherUnavailable.visibility = View.GONE
+        Timber.d("Layout showed, \"Weather unavailable sign hidden\"")
+    }
+
+    private fun hideLayout() {
+        val views = binding.root.getAllViews()
+        for (v in views) {
+            v.visibility = View.GONE
+        }
+        binding.tvWeatherUnavailable.visibility = View.VISIBLE
+        Timber.d("Layout hidden, \"Weather unavailable sign showed\"")
     }
 
     private fun setupWeather() {
@@ -125,6 +152,7 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
 
             swiperefresh.setOnRefreshListener(this@WeatherFragment)
         }
+        Timber.d("Weather UI is prepared")
     }
 
     private fun bindWeather(sLocation: ShortLocation, weather: OneCallWeather) {
@@ -172,7 +200,7 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
         
         binding.apply {
             toolbarWeather.title =
-                "${sLocation.populatedPlace}, ${weather.date.format(dateFormatter)}"
+                "${sLocation.populatedPlace}, ${weather.dateTime.format(dateTimeFormatter)}"
             tvCurrentTemp.text = tempFormatted
             tvCurrentWeather.text = weather.weatherTitle
             ivWeather.setImageResource(weatherIconBigRes)
@@ -200,46 +228,53 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
             rvDailyForecast.visibility = View.VISIBLE
 
             swiperefresh.isRefreshing = false
+            Timber.d("Weather UI binded")
+
+            binding.skeletonLayout.showOriginal()
+            Timber.d("Skeleton is off")
+
+            val now = LocalTime.now()
+            val weatherTimeStamp = weather.dateTime.toLocalTime()
+            if (weatherTimeStamp.until(now, ChronoUnit.MINUTES) > 5) {
+                showDataOutdatedSnackbar()
+            }
         }
     }
 
-    private fun hideLayout() {
-        val views = binding.root.getAllViews()
-        for (v in views) {
-            v.visibility = View.GONE
-        }
-        binding.tvWeatherUnavailable.visibility = View.VISIBLE
+    private fun showDataOutdatedSnackbar() {
+        Snackbar.make(binding.root, R.string.data_outdated, Snackbar.LENGTH_INDEFINITE)
+            .setAction(R.string.refresh) {
+                Timber.d("Refreshing weather UI from DataOutdated snackbar")
+                refreshWeather()
+            }.show()
     }
 
-    private fun showLayout() {
-        val views = binding.root.getAllViews()
-        for (v in views) {
-            v.visibility = View.VISIBLE
-        }
-        binding.tvWeatherUnavailable.visibility = View.GONE
-
-    }
-
-    private fun setViewModelWeather() {
+    private fun refreshWeather() {
+        binding.skeletonLayout.showSkeleton()
+        Timber.d("Skeleton is on")
 //        if (arguments != null) {
 //            // Set with search results
 //            viewModel.setWeather(args.newShortLocation)
 //        } else {
             // Set using location API
             if (hasCoarseLocationPermission()) {
-                setWeatherWithCurrentLocation()
+                Timber.d("Has location services permission")
+                refreshWeatherWithCurrentLocation()
             } else {
+                Timber.d("Doesn't has location services permission")
                 requestCoarseLocationPermission()
             }
 //        }
     }
 
     @SuppressLint("MissingPermission")
-    private fun setWeatherWithCurrentLocation() {
+    private fun refreshWeatherWithCurrentLocation() {
+        Timber.d("Getting location from location services")
         application.fusedLocationClient.lastLocation.addOnCompleteListener { locationTask ->
             val lastLocation = locationTask.result
             if (lastLocation != null &&
                 System.currentTimeMillis() - lastLocation.time < Const.LOCATION_REFRESH_INTERVAL) {
+                Timber.d("Setting VM with last location")
                 viewModel.setWeather(lastLocation)
             } else {
                 application.fusedLocationClient.getCurrentLocation(
@@ -248,8 +283,10 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
                 ).addOnCompleteListener {
                     val currentLocation = locationTask.result
                     if (currentLocation != null) {
+                        Timber.d("Setting VM with current location")
                         viewModel.setWeather(currentLocation)
                     } else {
+                        Timber.d("Setting VM with no location")
                         viewModel.setWeather()
                     }
                 }
@@ -271,20 +308,6 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
             Manifest.permission.ACCESS_COARSE_LOCATION
         )
 
-    override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
-        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
-            SettingsDialog.Builder(requireActivity()).build().show()
-        } else {
-            requestCoarseLocationPermission()
-        }
-    }
-
-
-
-    override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
-        setWeatherWithCurrentLocation()
-    }
-    
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -294,19 +317,53 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
     }
 
+    override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
+        Timber.d("Permission granted after request. Refreshing location and weather")
+        refreshWeatherWithCurrentLocation()
+    }
+
+    override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
+        if (EasyPermissions.somePermissionPermanentlyDenied(this, perms)) {
+            Timber.d("Permission permanently denied after request. Showing system permission dialog")
+            SettingsDialog.Builder(requireActivity()).build().show()
+        } else {
+            Timber.d("Permission denied after request. Requesting again with rationale")
+            requestCoarseLocationPermission()
+        }
+    }
+
     override fun onRefresh() {
+        Timber.d("Refreshing weather UI with swipe")
         binding.skeletonLayout.showSkeleton()
-        setViewModelWeather()
+        refreshWeather()
     }
 
     override fun onItemClick(view: View?, position: Int) {
         val action = WeatherFragmentDirections.actionToDailyForecastExtendedFragment(position)
         findNavController().navigate(action)
+        Timber.d("Navigating to ForecastExtendedFragment")
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
         _application = null
+        Timber.d("_binding and _application cleared")
+    }
+
+    override fun onClick(dialog: DialogInterface?, which: Int) {
+        when (which) {
+            DialogInterface.BUTTON_POSITIVE -> {
+                Timber.d("Refreshing weather UI from ApiUnavailable dialog")
+                (dialog as AlertDialog).dismiss()
+                refreshWeather()
+            }
+            DialogInterface.BUTTON_NEGATIVE -> {
+                Timber.d("ApiUnavailable dialog cancelled. Exiting app")
+                (dialog as AlertDialog).dismiss()
+                requireActivity().moveTaskToBack(true)
+                requireActivity().finish()
+            }
+        }
     }
 }

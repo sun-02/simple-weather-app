@@ -4,12 +4,9 @@ import android.os.Bundle
 import androidx.lifecycle.AbstractSavedStateViewModelFactory
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
 import androidx.savedstate.SavedStateRegistryOwner
-import com.example.simpleweatherapp.data.MapsRepository
-import com.example.simpleweatherapp.data.WeatherRepository
-import com.example.simpleweatherapp.ui.search.SearchViewModel
-import com.google.android.gms.location.FusedLocationProviderClient
+import com.example.simpleweatherapp.data.bingmaps.MapsRepository
+import com.example.simpleweatherapp.data.openweather.WeatherRepository
 
 @Suppress("UNCHECKED_CAST")
 class WeatherViewModelFactory(
