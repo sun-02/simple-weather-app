@@ -33,7 +33,7 @@ class DailyForecastExtendedAdapter(private val dailyForecastList: List<DailyFore
     }
 
     class DailyForecastExtendedViewHolder(
-        val binding: ItemDailyForecastExtendedBinding
+        private val binding: ItemDailyForecastExtendedBinding
     ): RecyclerView.ViewHolder(binding.root) {
 
         fun bind(df: DailyForecast) {
@@ -42,39 +42,39 @@ class DailyForecastExtendedAdapter(private val dailyForecastList: List<DailyFore
             val weatherImageRes =
                 weatherImagesRes[df.weatherIcon] ?: R.drawable.ic_unavailable
 
-            val tempMorning = df.mornTemp.toInt()
+            val tempMorning = df.mornTemp
             val tempMorningFormatted = itemView.context
                 .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempMorning))
 
-            val tempDay = df.dayTemp.toInt()
+            val tempDay = df.dayTemp
             val tempDayFormatted = itemView.context
                 .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempDay))
 
-            val tempEvening = df.eveTemp.toInt()
+            val tempEvening = df.eveTemp
             val tempEveningFormatted = itemView.context
                 .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempEvening))
 
-            val tempNight = df.nightTemp.toInt()
+            val tempNight = df.nightTemp
             val tempNightFormatted = itemView.context
                 .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempNight))
 
-            val feelsLikeMorning = df.mornFeelsLike.toInt()
+            val feelsLikeMorning = df.mornFeelsLike
             val feelsLikeMorningFormatted = itemView.context
                 .getString(R.string.temp_n_dew_point_formatted, intToSignedString(feelsLikeMorning))
 
-            val feelsLikeDay = df.dayFeelsLike.toInt()
+            val feelsLikeDay = df.dayFeelsLike
             val feelsLikeDayFormatted = itemView.context
                 .getString(R.string.temp_n_dew_point_formatted, intToSignedString(feelsLikeDay))
 
-            val feelsLikeEvening = df.eveFeelsLike.toInt()
+            val feelsLikeEvening = df.eveFeelsLike
             val feelsLikeEveningFormatted = itemView.context
                 .getString(R.string.temp_n_dew_point_formatted, intToSignedString(feelsLikeEvening))
 
-            val feelsLikeNight = df.nightFeelsLike.toInt()
+            val feelsLikeNight = df.nightFeelsLike
             val feelsLikeNightFormatted = itemView.context
                 .getString(R.string.temp_n_dew_point_formatted, intToSignedString(feelsLikeNight))
             
-            val wind = df.windSpeed.toInt().toString()
+            val wind = df.windSpeed.toString()
             val windFormatted = itemView.context
                 .getString(R.string.wind_speed_formatted, wind)
             val windSpanned = paintStartValue(windFormatted, wind, textColor)
@@ -95,7 +95,7 @@ class DailyForecastExtendedAdapter(private val dailyForecastList: List<DailyFore
                 .getString(R.string.pressure_newline_formatted, pressure)
             val pressureSpanned = paintStartValue(pressureFormatted, pressure, textColor)
 
-            val uvi = df.uvi.toInt().toString()
+            val uvi = df.uvi.toString()
             val uviFormatted = itemView.context
                 .getString(R.string.uvi_formatted, uvi)
             val uviSpanned = paintEndValue(uviFormatted, uvi, textColor)
@@ -103,31 +103,31 @@ class DailyForecastExtendedAdapter(private val dailyForecastList: List<DailyFore
             val uviIcon = AppCompatResources.getDrawable(itemView.context, uviIconRes)
             
             binding.apply {
-                ivDailyWeather.setImageResource(weatherImageRes)
-                tvDailyMorningTemp.text = tempMorningFormatted
-                tvDailyDayTemp.text = tempDayFormatted
-                tvDailyEveningTemp.text = tempEveningFormatted
-                tvDailyNightTemp.text = tempNightFormatted
-                tvFeelsLikeMorning.text = feelsLikeMorningFormatted
-                tvFeelsLikeDay.text = feelsLikeDayFormatted
-                tvFeelsLikeEvening.text = feelsLikeEveningFormatted
-                tvFeelsLikeNight.text = feelsLikeNightFormatted
-                tvDailyDayTemp.text = tempDayFormatted
-                tvDailyEveningTemp.text = tempEveningFormatted
-                tvDailyNightTemp.text = tempNightFormatted
-                tvDailyWind.text = windSpanned
-                tvDailyWindDeg.text = windDirText
-                tvDailyWindDeg.setCompoundDrawablesWithIntrinsicBounds(
+                ivDailyExWeather.setImageResource(weatherImageRes)
+                tvDailyExMorningTemp.text = tempMorningFormatted
+                tvDailyExDayTemp.text = tempDayFormatted
+                tvDailyExEveningTemp.text = tempEveningFormatted
+                tvDailyExNightTemp.text = tempNightFormatted
+                tvDailyExFeelsLikeMorning.text = feelsLikeMorningFormatted
+                tvDailyExFeelsLikeDay.text = feelsLikeDayFormatted
+                tvDailyExFeelsLikeEvening.text = feelsLikeEveningFormatted
+                tvDailyExFeelsLikeNight.text = feelsLikeNightFormatted
+                tvDailyExDayTemp.text = tempDayFormatted
+                tvDailyExEveningTemp.text = tempEveningFormatted
+                tvDailyExNightTemp.text = tempNightFormatted
+                tvDailyExWind.text = windSpanned
+                tvDailyExWindDeg.text = windDirText
+                tvDailyExWindDeg.setCompoundDrawablesWithIntrinsicBounds(
                     windArrow, null, null, null)
-                tvDailyHumidity.text = humiditySpanned
-                tvDailyPressure.text = pressureSpanned
-                tvDailyUvi.setCompoundDrawablesWithIntrinsicBounds(
+                tvDailyExHumidity.text = humiditySpanned
+                tvDailyExPressure.text = pressureSpanned
+                tvDailyExUvi.setCompoundDrawablesWithIntrinsicBounds(
                     null, uviIcon, null, null)
-                tvDailyUvi.text = uviSpanned
-                tvDailySunrise.text = df.sunrise.format(timeFormatter)
-                tvDailySunset.text = df.sunset.format(timeFormatter)
-                tvDailyMoonrise.text = df.moonrise.format(timeFormatter)
-                tvDailyMoonset.text = df.moonset.format(timeFormatter)
+                tvDailyExUvi.text = uviSpanned
+                tvDailyExSunrise.text = df.sunrise.format(timeFormatter)
+                tvDailyExSunset.text = df.sunset.format(timeFormatter)
+                tvDailyExMoonrise.text = df.moonrise.format(timeFormatter)
+                tvDailyExMoonset.text = df.moonset.format(timeFormatter)
             }
         }
     }

@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat.getColor
-import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -17,15 +16,12 @@ import com.example.simpleweatherapp.R
 import com.example.simpleweatherapp.SimpleWeatherApplication
 import com.example.simpleweatherapp.databinding.FragmentDailyForecastExtendedBinding
 import com.example.simpleweatherapp.model.openweather.DailyForecast
-import com.example.simpleweatherapp.util.getAllViews
 import com.example.simpleweatherapp.util.getStatusBarHeight
-import com.example.simpleweatherapp.util.paintStartValue
 import com.example.simpleweatherapp.util.setToolbarLayoutTopMarginWithRespectOfStatusBarHeight
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
-import java.time.format.DateTimeFormatter
 import java.util.*
 
 class DailyForecastExtendedFragment : Fragment() {
@@ -63,7 +59,7 @@ class DailyForecastExtendedFragment : Fragment() {
 
         lateinit var dailyForecastList: List<DailyForecast>
         lifecycleScope.launch {
-            dailyForecastList = viewModel.locationAndWeather.first().second.dailyForecast
+            dailyForecastList = viewModel.currentWeather.first().dailyForecast!!
         }
 
         binding.pager.adapter = DailyForecastExtendedAdapter(dailyForecastList)

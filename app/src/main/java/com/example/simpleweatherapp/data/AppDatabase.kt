@@ -1,11 +1,24 @@
 package com.example.simpleweatherapp.data
 
+import android.content.Context
 import androidx.room.Database
+import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
+import com.example.simpleweatherapp.model.bingmaps.ShortLocation
+import com.example.simpleweatherapp.model.openweather.DailyForecast
+import com.example.simpleweatherapp.model.openweather.HourlyForecast
+import com.example.simpleweatherapp.model.openweather.OneCallWeather
 
-@Database(entities = arrayOf(Schedule::class), version = 1)
+@Database(entities = [
+    ShortLocation::class,
+    OneCallWeather::class,
+    HourlyForecast::class,
+    DailyForecast::class
+                     ], version = 1)
+@TypeConverters(Converters::class)
 abstract class AppDatabase: RoomDatabase() {
-    abstract fun scheduleDao(): ScheduleDao
+    abstract fun appDao(): AppDao
 
     companion object {
         @Volatile
@@ -17,7 +30,7 @@ abstract class AppDatabase: RoomDatabase() {
                     context,
                     AppDatabase::class.java,
                     "app_database")
-                    .createFromAsset("database/bus_schedule.db")
+                    .createFromAsset("database/app.db")
                     .build()
                 INSTANCE = instance
                 instance

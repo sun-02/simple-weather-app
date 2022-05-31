@@ -45,7 +45,7 @@ class HourlyForecastAdapter : ListAdapter<HourlyForecast,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(hf: HourlyForecast) {
-            val temp = hf.temp.toInt()
+            val temp = hf.temp
             val tempFormatted = itemView.context
                 .getString(R.string.temp_n_dew_point_formatted, intToSignedString(temp))
 

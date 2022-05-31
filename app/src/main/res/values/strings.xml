@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Simple Weather App</string>
-    <string name="favorite">Favorite</string>
-    <string name="search_label">Search</string>
     <string name="today">Today</string>
     <string name="tomorrow">Tomorrow</string>
     <string name="lorem_ipsum_short">Lorem ipsum dolor sit amet, consectetur adipiscing elit.</string>
@@ -25,7 +23,7 @@
     <string name="uvi_formatted">UVI %1$s</string>
 
     <!--  TextView stubs  -->
-    <string name="weather_title_stub">London, May 24 - 8:00</string>
+    <string name="weather_title_stub">London, May 24 &#8211; 8:00</string>
     <string name="temp_stub">-30\u00B0</string>
     <string name="weather_stub">Clear</string>
     <string name="feels_like_stub">Feels like -8\u00B0</string>
@@ -42,6 +40,7 @@
     <string name="date_short_stub">24</string>
     <string name="dow_stub">Tomorrow</string>
     <string name="dow_short_stub">Mon</string>
+    <string name="location_stub">London</string>
 
     <!--  Labels  -->
     <string name="daily_forecast_label">Eight day forecast</string>
@@ -50,6 +49,11 @@
     <string name="daily_forecast_evening_label">Evening</string>
     <string name="daily_forecast_night_label">Night</string>
     <string name="daily_feels_like_label">Feels like</string>
+    <string name="favorite_locations_label">Favorite locations</string>
+    <string name="current_location_label">Current location</string>
+    <string name="favorites">Favorites</string>
+    <string name="add_to_favorites">Add to favorites</string>
+    <string name="search_label">Search</string>
 
     <!--  Views description  -->
     <string name="weather_image">Weather image</string>

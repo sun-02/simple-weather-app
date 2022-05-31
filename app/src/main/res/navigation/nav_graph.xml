@@ -14,7 +14,11 @@
         android:id="@+id/searchFragment"
         android:name="com.example.simpleweatherapp.ui.search.SearchFragment"
         android:label="fragment_search"
-        tools:layout="@layout/fragment_search" />
+        tools:layout="@layout/fragment_search" >
+        <action
+            android:id="@+id/action_to_currentWeatherFragment"
+            app:destination="@id/currentWeatherFragment" />
+    </fragment>
     <fragment
         android:id="@+id/currentWeatherFragment"
         android:name="com.example.simpleweatherapp.ui.weather.WeatherFragment"
@@ -26,6 +30,9 @@
         <action
             android:id="@+id/action_to_dailyForecastExtendedFragment"
             app:destination="@id/dailyForecastExtendedFragment" />
+        <action
+            android:id="@+id/action_to_savedLocationsFragment"
+            app:destination="@id/savedLocationsFragment" />
     </fragment>
     <fragment
         android:id="@+id/dailyForecastExtendedFragment"
@@ -34,5 +41,16 @@
         <argument
             android:name="position"
             app:argType="integer" />
+    </fragment>
+    <fragment
+        android:id="@+id/savedLocationsFragment"
+        android:name="com.example.simpleweatherapp.ui.weather.SavedLocationsFragment"
+        android:label="SavedLocationsFragment" >
+        <action
+            android:id="@+id/action_to_currentWeatherFragment"
+            app:destination="@id/currentWeatherFragment" />
+        <action
+            android:id="@+id/action_to_searchFragment"
+            app:destination="@id/searchFragment" />
     </fragment>
 </navigation>

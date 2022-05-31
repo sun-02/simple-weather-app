@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
@@ -28,16 +29,17 @@
         android:id="@+id/tab_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="@dimen/margin_medium"
         android:background="@color/light_beige"
-        app:tabMaxWidth="@dimen/tab_size"
-        app:tabPaddingStart="@dimen/margin_tiny_plus"
-        app:tabPaddingEnd="@dimen/margin_tiny_plus"
+        android:paddingBottom="@dimen/margin_medium"
         app:tabIndicator="@drawable/ic_tab_indicator"
+        app:tabIndicatorAnimationMode="fade"
         app:tabIndicatorColor="@android:color/transparent"
         app:tabIndicatorFullWidth="false"
-        app:tabIndicatorAnimationMode="fade"
-        app:tabMode="scrollable" />
+        app:tabMaxWidth="@dimen/tab_size"
+        app:tabMode="scrollable"
+        app:tabPaddingEnd="@dimen/margin_tiny_plus"
+        app:tabPaddingStart="@dimen/margin_tiny_plus"
+        tools:ignore="SpeakableTextPresentCheck" />
 
     <androidx.viewpager2.widget.ViewPager2
     android:id="@+id/pager"

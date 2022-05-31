@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/toolbar_layout_saved_locations"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/light_beige">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolbar_saved_locations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:elevation="0dp"
+            android:textAlignment="center"
+            app:navigationIcon="@drawable/ic_back_24dp"
+            app:title="@string/favorites"
+            app:titleTextAppearance="@style/ToolbarTitle"
+            app:titleTextColor="@color/text_color" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_medium"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:text="@string/current_location_label"
+                android:textColor="@color/text_color_semitransparent"
+                android:textSize="@dimen/font_small"
+                tools:layout_marginEnd="@dimen/margin_medium" />
+
+
+            <include
+                android:id="@+id/current_location"
+                layout="@layout/item_favorite_locations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_medium"
+                android:layout_marginEnd="@dimen/margin_medium" />
+
+            <View
+                android:id="@+id/div_current_location"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/barrier_thick"
+                android:background="@color/divider" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_medium"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:text="@string/favorite_locations_label"
+                android:textColor="@color/text_color_semitransparent"
+                android:textSize="@dimen/font_small"
+                tools:layout_marginEnd="@dimen/margin_medium" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_favorite_locations"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_medium"
+                android:layout_marginEnd="@dimen/margin_medium"
+                android:orientation="vertical"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                tools:itemCount="5"
+                tools:ignore="SpeakableTextPresentCheck"
+                tools:listitem="@layout/item_favorite_locations" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+</LinearLayout>

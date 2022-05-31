@@ -5,7 +5,7 @@ import android.util.ArrayMap
 object ResourcesMapping {
     val weatherImagesRes = ArrayMap<String, Int>()
     val weatherIconsRes = ArrayMap<String, Int>()
-    val uviIconsRes = ArrayMap<ClosedRange<Double>, Int>()
+    val uviIconsRes = ArrayMap<ClosedRange<Int>, Int>()
     val windDirectionsRes = ArrayMap<ClosedRange<Int>, Int>()
 
     init {
@@ -50,11 +50,11 @@ object ResourcesMapping {
             put("50n", R.drawable.ic_50n_96px)
         }
         uviIconsRes.apply {
-            put(0.0..2.999, R.drawable.ic_uvi_1_2_24dp)
-            put(3.0..5.999, R.drawable.ic_uvi_3_5_24dp)
-            put(6.0..7.999, R.drawable.ic_uvi_6_7_24dp)
-            put(8.0..10.999, R.drawable.ic_uvi_8_10_24dp)
-            put(11.0..30.00, R.drawable.ic_uvi_11_24dp)
+            put(0..2, R.drawable.ic_uvi_1_2_24dp)
+            put(3..5, R.drawable.ic_uvi_3_5_24dp)
+            put(6..7, R.drawable.ic_uvi_6_7_24dp)
+            put(8..10, R.drawable.ic_uvi_8_10_24dp)
+            put(11..30, R.drawable.ic_uvi_11_24dp)
         }
         windDirectionsRes.apply {
             put(0..11, R.string.south)

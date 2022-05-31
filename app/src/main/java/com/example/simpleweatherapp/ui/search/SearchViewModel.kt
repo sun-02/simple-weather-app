@@ -20,9 +20,9 @@ class SearchViewModel(
     private val _mapsApiAvailable = MutableStateFlow(true)
     val mapsApiAvailable: StateFlow<Boolean> = _mapsApiAvailable.asStateFlow()
 
-    fun queryLocationByName(name: String) {
+    fun queryLocation(name: String) {
         viewModelScope.launch {
-            mapsRepository.getLocationsList(name).let { result ->
+            mapsRepository.getRemoteLocationList(name).let { result ->
                 if (result is Result.Success) {
                     _locations.value = result.data
                     _mapsApiAvailable.value = true

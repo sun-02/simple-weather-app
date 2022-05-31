@@ -80,20 +80,20 @@ class DailyForecastAdapter(
             val weatherIconRes =
                 weatherIconsRes[df.weatherIcon] ?: R.drawable.ic_unavailable
 
-            val tempDay = df.dayTemp.toInt()
+            val tempDay = df.dayTemp
             val tempDayFormatted = itemView.context
                 .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempDay))
 
-            val tempNight = df.nightTemp.toInt()
+            val tempNight = df.nightTemp
             val tempNightFormatted = itemView.context
                 .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempNight))
 
             binding.apply {
-                tvDow.text = dowSpanned
-                tvDate.text = dateFormatted
-                ivWeather.setImageResource(weatherIconRes)
-                tvTempDay.text = tempDayFormatted
-                tvTempNight.text = tempNightFormatted
+                tvDailyDow.text = dowSpanned
+                tvDailyDate.text = dateFormatted
+                ivDailyWeather.setImageResource(weatherIconRes)
+                tvDailyTempDay.text = tempDayFormatted
+                tvDailyTempNight.text = tempNightFormatted
             }
             itemView.setOnClickListener(this)
         }

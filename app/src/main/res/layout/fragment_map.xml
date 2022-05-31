@@ -38,8 +38,8 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="@dimen/margin_medium"
         android:clickable="true"
-        android:contentDescription="@string/favorite"
         android:focusable="true"
-        android:src="@drawable/ic_search_24dp" />
+        android:src="@drawable/ic_search_24dp"
+        tools:ignore="ContentDescription" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

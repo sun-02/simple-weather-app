@@ -1,45 +1,38 @@
 package com.example.simpleweatherapp.data.openweather
 
+import com.example.simpleweatherapp.data.LocalDataSource
 import com.example.simpleweatherapp.model.Result
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.example.simpleweatherapp.model.openweather.OneCallWeather
+import com.example.simpleweatherapp.model.openweather.ShortWeather
 import com.example.simpleweatherapp.model.openweather.UnitSystem
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import timber.log.Timber
-import java.time.LocalDateTime
 
 class DefaultWeatherRepository(
     private val remoteWeatherDataSource: RemoteWeatherDataSource,
-    private val localWeatherDataSource: LocalWeatherDataSource,
+    private val localDataSource: LocalDataSource
 ) : WeatherRepository {
 
-    private val ioDispatcher: CoroutineDispatcher = Dispatchers.IO
-
-    override suspend fun getOneCallWeather(
+    override suspend fun getWeather(
         sLocation: ShortLocation,
         unitSystem: UnitSystem
     ): Result<OneCallWeather> {
-        val weatherResult = getRemoteOneCallWeather(sLocation, unitSystem)
-        when (weatherResult) {
+        return when (val weatherResult = getRemoteWeather(sLocation, unitSystem)) {
             is Result.Success -> {
-                Timber.d("Got weather=${weatherResult.data} from remote source")
+                Timber.d("Got weather=$weatherResult from remote source")
                 weatherResult.data.name = sLocation.name
                 Timber.d("Name=${sLocation.name} added to weather")
-                saveOneCallWeather(weatherResult.data)
-                return weatherResult
+                saveWeather(weatherResult.data)
+                weatherResult
             }
             is Result.Error -> {
                 Timber.d("Weather remote source returned error=$weatherResult")
-                return getLocalOneCallWeather(sLocation.name)
+                getLocalWeather(sLocation.name)
             }
         }
-
-
-        return weatherResult
     }
 
-    private suspend fun getRemoteOneCallWeather(
+    private suspend fun getRemoteWeather(
         sLocation: ShortLocation,
          unitSystem: UnitSystem
     ): Result<OneCallWeather> = remoteWeatherDataSource.fetchOneCallWeather(
@@ -48,15 +41,18 @@ class DefaultWeatherRepository(
             unitSystem
         )
 
-    private suspend fun getLocalOneCallWeather(name: String): Result<OneCallWeather> {
+    override suspend fun getFavWeatherList(
+        sLocationList: List<ShortLocation>
+    ): Result<List<ShortWeather>> = localDataSource.getFavWeatherList(sLocationList)
 
-    }
+    private suspend fun getLocalWeather(name: String): Result<OneCallWeather> =
+        localDataSource.getWeather(name)
 
-    private suspend fun saveOneCallWeather(weather: OneCallWeather) {}
+    private suspend fun saveWeather(weather: OneCallWeather) =
+        localDataSource.saveWeather(weather)
 
-    private suspend fun deleteOneCallWeather(weather: OneCallWeather) {}
-
-    private suspend fun deleteOldOneCallWeather(weather: OneCallWeather) {}
+    override suspend fun deleteOldWeather(latestDateEpochSeconds: Int) =
+        localDataSource.deleteOldWeather(latestDateEpochSeconds)
 
 
 }

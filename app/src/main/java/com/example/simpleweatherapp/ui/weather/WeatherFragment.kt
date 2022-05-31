@@ -5,10 +5,10 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.ImageButton
 import androidx.appcompat.content.res.AppCompatResources
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -18,34 +18,40 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.*
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.simpleweatherapp.Const
-import com.example.simpleweatherapp.DateTimeFormatters.dateTimeFormatter
+import com.example.simpleweatherapp.DateTimeFormatters.timeFormatter
 import com.example.simpleweatherapp.R
 import com.example.simpleweatherapp.SimpleWeatherApplication
 import com.example.simpleweatherapp.databinding.FragmentWeatherBinding
-import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.example.simpleweatherapp.model.openweather.OneCallWeather
 import com.example.simpleweatherapp.ui.OnItemClickListener
 import com.example.simpleweatherapp.util.*
 import com.example.simpleweatherapp.ResourcesMapping.uviIconsRes
 import com.example.simpleweatherapp.ResourcesMapping.weatherImagesRes
 import com.example.simpleweatherapp.ResourcesMapping.windDirectionsRes
+import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.tasks.*
 import com.google.android.material.snackbar.Snackbar
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.time.LocalTime
 import java.time.temporal.ChronoUnit
 
 
 class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRefreshListener,
-    DialogInterface.OnClickListener, EasyPermissions.PermissionCallbacks {
+    DialogInterface.OnClickListener, View.OnClickListener, EasyPermissions.PermissionCallbacks,
+    Toolbar.OnMenuItemClickListener {
 
     companion object {
         private const val ACCESS_COARSE_LOCATION_PERMISSIONS_REQUEST = 1
     }
+
+    private var menu: Menu? = null
+
+    private var isFavorite: Boolean = false
 
     private val args: WeatherFragmentArgs by navArgs()
 
@@ -56,16 +62,18 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
         WeatherViewModelFactory(
             application.mapsRepository,
             application.weatherRepository,
-            this
+            requireActivity()
         )
     }
 
     private var _binding: FragmentWeatherBinding? = null
     private val binding get() = _binding!!
 
-    private val hourlyForecastAdapter = HourlyForecastAdapter()
+    private var _hourlyForecastAdapter: HourlyForecastAdapter? = HourlyForecastAdapter()
+    private val hourlyForecastAdapter get() = _hourlyForecastAdapter!!
 
-    private val dailyForecastAdapter = DailyForecastAdapter(this)
+    private var _dailyForecastAdapter: DailyForecastAdapter? = DailyForecastAdapter(this)
+    private val dailyForecastAdapter get() = _dailyForecastAdapter!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,14 +86,13 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        Timber.d("onViewCreated start")
-        binding.toolbarWeather
-            .setToolbarLayoutTopMarginWithRespectOfStatusBarHeight(getStatusBarHeight())
-        Timber.d("ToolbarLayoutTopMargin setted")
+        Timber.d("onViewCreated started")
 
         _application = requireContext().applicationContext as SimpleWeatherApplication
 
-        lifecycleScope.launchWhenStarted {
+
+
+        lifecycleScope.launch {
             viewModel.isWeatherAvailable.collect { isAvailable ->
                 if (!isAvailable) {
                     val dialog = ApiUnavailableDialogFragment()
@@ -98,76 +105,72 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
         }
         Timber.d("Preparing weather UI")
         setupWeather()
-        lifecycleScope.launchWhenStarted {
-            viewModel.locationAndWeather.collect {
+        lifecycleScope.launch {
+            viewModel.currentWeather.collect {
                 Timber.d("Binding weather UI")
-                bindWeather(it.first, it.second)
+                bindWeather(it)
             }
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        Timber.d("Refreshing location and weather")
-        refreshWeather()
-    }
-
-    override fun onPause() {
-        super.onPause()
-        Timber.d("Paused")
-    }
-
-    private fun showLayout() {
-        val views = binding.root.getAllViews()
-        for (v in views) {
-            v.visibility = View.VISIBLE
-        }
-        binding.tvWeatherUnavailable.visibility = View.GONE
-        Timber.d("Layout showed, \"Weather unavailable sign hidden\"")
-    }
-
-    private fun hideLayout() {
-        val views = binding.root.getAllViews()
-        for (v in views) {
-            v.visibility = View.GONE
-        }
-        binding.tvWeatherUnavailable.visibility = View.VISIBLE
-        Timber.d("Layout hidden, \"Weather unavailable sign showed\"")
-    }
-
     private fun setupWeather() {
         binding.apply {
-            rvHourlyForecast.adapter = hourlyForecastAdapter
-            rvDailyForecast.layoutManager =
-                object : LinearLayoutManager(requireContext()){
-                    override fun canScrollVertically(): Boolean { return false }
+            toolbarWeather.apply {
+                setToolbarLayoutTopMarginWithRespectOfStatusBarHeight(getStatusBarHeight())
+                Timber.d("ToolbarLayoutTopMargin is set")
+                setNavigationOnClickListener(this@WeatherFragment)
+                inflateMenu(R.menu.menu_main)
+                setOnMenuItemClickListener(this@WeatherFragment)
+                this@WeatherFragment.menu = menu
+            }
+            lifecycleScope.launch {
+                viewModel.favLocationList.collect {
+                    val sLocation = viewModel.savedState.get<ShortLocation>(Const.LAST_LOCATION_KEY)
+                    if (it.contains(sLocation)) {
+                        isFavorite = true
+                        menu!!.getItem(0).setIcon(R.drawable.ic_heart_filled_24dp)
+                    } else {
+                        isFavorite = false
+                        menu!!.getItem(0).setIcon(R.drawable.ic_heart_24dp)
+                    }
                 }
-            rvDailyForecast.adapter = dailyForecastAdapter
-            val dailyForecastItemDivider = DividerItemDecoration(requireContext(),
-                RecyclerView.VERTICAL)
-            dailyForecastItemDivider.setDrawable(
-                AppCompatResources.getDrawable(requireContext(), R.drawable.daily_forecast_item_divider)!!
-            )
-            rvDailyForecast.addItemDecoration(dailyForecastItemDivider)
+            }
 
+            rvHourlyForecast.adapter = hourlyForecastAdapter
+            rvDailyForecast.apply {
+                layoutManager =
+                    object : LinearLayoutManager(requireContext()){
+                        override fun canScrollVertically(): Boolean { return false }
+                    }
+                adapter = dailyForecastAdapter
+                val dailyForecastItemDivider = DividerItemDecoration(requireContext(),
+                    RecyclerView.VERTICAL)
+                dailyForecastItemDivider.setDrawable(
+                    AppCompatResources.getDrawable(requireContext(), R.drawable.daily_forecast_item_divider)!!
+                )
+                addItemDecoration(dailyForecastItemDivider)
+            }
             swiperefresh.setOnRefreshListener(this@WeatherFragment)
         }
         Timber.d("Weather UI is prepared")
     }
 
-    private fun bindWeather(sLocation: ShortLocation, weather: OneCallWeather) {
+    private fun bindWeather(weather: OneCallWeather) {
+        val titlePopPlace = weather.name!!.split(", ")[0]
+        val titleTime = weather.dateTime.toLocalTime().format(timeFormatter)
+
         val weatherIconBigRes =
             weatherImagesRes[weather.weatherIcon] ?: R.drawable.ic_unavailable
 
-        val temp = weather.temp.toInt()
+        val temp = weather.temp
         val tempFormatted = getString(R.string.temp_n_dew_point_formatted, intToSignedString(temp))
 
-        val feelsLike = weather.feelsLike.toInt()
+        val feelsLike = weather.feelsLike
         val feelsLikeFormatted = getString(R.string.feels_like_formatted, intToSignedString(feelsLike))
 
         val textColor = getColor(requireContext(), R.color.text_color)
         
-        val wind = weather.windSpeed.toInt().toString()
+        val wind = weather.windSpeed.toString()
         val windFormatted = getString(R.string.wind_speed_formatted, wind)
         val windSpanned = paintStartValue(windFormatted, wind, textColor)
         val windDirRes = getResFromRange(windDirectionsRes, weather.windDeg)
@@ -184,7 +187,7 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
         val pressureFormatted = getString(R.string.pressure_formatted, pressure)
         val pressureSpanned = paintStartValue(pressureFormatted, pressure, textColor)
         
-        val dewPoint = weather.dewPoint.toInt().toString()
+        val dewPoint = weather.dewPoint.toString()
         val dewPointFormatted = getString(R.string.temp_n_dew_point_formatted, dewPoint)
         val dewPointSpanned = paintStartValue(dewPointFormatted, dewPoint, textColor)
 
@@ -192,15 +195,14 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
         val visibilityFormatted = getString(R.string.visibility_formatted, visibility)
         val visibilitySpanned = paintStartValue(visibilityFormatted, visibility, textColor)
 
-        val uvi = weather.uvi.toInt().toString()
+        val uvi = weather.uvi.toString()
         val uviFormatted = getString(R.string.uvi_formatted, uvi)
         val uviSpanned = paintEndValue(uviFormatted, uvi, textColor)
         val uviIconRes = getResFromRange(uviIconsRes, weather.uvi) ?: R.drawable.ic_unavailable
         val uviIcon = AppCompatResources.getDrawable(requireContext(), uviIconRes)
         
         binding.apply {
-            toolbarWeather.title =
-                "${sLocation.populatedPlace}, ${weather.dateTime.format(dateTimeFormatter)}"
+            toolbarWeather.title = "$titlePopPlace, $titleTime"
             tvCurrentTemp.text = tempFormatted
             tvCurrentWeather.text = weather.weatherTitle
             ivWeather.setImageResource(weatherIconBigRes)
@@ -249,22 +251,28 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
             }.show()
     }
 
+    override fun onResume() {
+        super.onResume()
+        Timber.d("Refreshing location and weather")
+        refreshWeather()
+    }
+
     private fun refreshWeather() {
         binding.skeletonLayout.showSkeleton()
         Timber.d("Skeleton is on")
-//        if (arguments != null) {
-//            // Set with search results
-//            viewModel.setWeather(args.newShortLocation)
-//        } else {
-            // Set using location API
-            if (hasCoarseLocationPermission()) {
-                Timber.d("Has location services permission")
-                refreshWeatherWithCurrentLocation()
-            } else {
-                Timber.d("Doesn't has location services permission")
-                requestCoarseLocationPermission()
-            }
-//        }
+        if (args.newShortLocation != null) {
+            Timber.d("Set VM weather from args")
+            viewModel.setWeather(args.newShortLocation)
+            return
+        }
+        Timber.d("Set VM weather with location API")
+        if (hasCoarseLocationPermission()) {
+            Timber.d("Has location services permission")
+            refreshWeatherWithCurrentLocation()
+        } else {
+            Timber.d("Hasn't location services permission")
+            requestCoarseLocationPermission()
+        }
     }
 
     @SuppressLint("MissingPermission")
@@ -346,6 +354,10 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
 
     override fun onDestroyView() {
         super.onDestroyView()
+        _hourlyForecastAdapter = null
+        _dailyForecastAdapter = null
+        binding.rvHourlyForecast.adapter = null
+        binding.rvDailyForecast.adapter = null
         _binding = null
         _application = null
         Timber.d("_binding and _application cleared")
@@ -366,4 +378,32 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
             }
         }
     }
+
+    override fun onClick(v: View?) {
+        if (v is ImageButton) {
+            Timber.d("Got toolbar nav button click. Navigation to SavedLocationsFragment")
+
+        }
+    }
+
+    override fun onMenuItemClick(item: MenuItem?): Boolean =
+        when (item!!.itemId) {
+            R.id.add_to_favorites_button -> {
+                Timber.d("Got \"add_to_favorites_button\" click")
+                val sLocation = viewModel.savedState.get<ShortLocation>(Const.LAST_LOCATION_KEY)
+                Timber.d("Got sLocation = $sLocation from saved state")
+                if (isFavorite) {
+                    viewModel.removeFavLocation(sLocation!!.name)
+                    Timber.d("Removing sLocation = $sLocation from favorites")
+                } else {
+                    viewModel.addFavLocation(sLocation!!)
+                    Timber.d("Adding sLocation = $sLocation to favorites")
+                }
+                lifecycleScope.launch {
+                    viewModel.refreshFavWeather()
+                }
+                true
+            }
+            else -> false
+        }
 }

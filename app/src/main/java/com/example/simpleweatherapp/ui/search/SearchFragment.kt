@@ -87,7 +87,7 @@ class SearchFragment : Fragment(), TextWatcher, OnItemClickListener {
 
     override fun afterTextChanged(s: Editable?) {
         if (s!!.length >= 2) {
-            viewModel.queryLocationByName(s.toString())
+            viewModel.queryLocation(s.toString())
         }
     }
 
