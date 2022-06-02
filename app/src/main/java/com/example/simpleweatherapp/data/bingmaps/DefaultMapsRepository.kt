@@ -1,5 +1,6 @@
 package com.example.simpleweatherapp.data.bingmaps
 
+import androidx.lifecycle.LiveData
 import com.example.simpleweatherapp.data.LocalDataSource
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.example.simpleweatherapp.model.Result
@@ -15,8 +16,8 @@ class DefaultMapsRepository(
     override suspend fun removeFavLocation(name: String) =
         localDataSource.deleteFavLocation(name)
 
-    override suspend fun getFavLocationList(): Result<List<ShortLocation>> =
-        localDataSource.getFavLocationList()
+    override fun observeFavLocationList(): LiveData<Result<List<ShortLocation>>> =
+        localDataSource.observeFavLocationList()
 
     override suspend fun getRemoteLocationList(name: String): Result<List<ShortLocation>> {
         return remoteMapsDataSource.fetchLocations(name)

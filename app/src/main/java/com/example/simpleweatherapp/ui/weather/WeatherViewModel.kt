@@ -1,9 +1,7 @@
 package com.example.simpleweatherapp.ui.weather
 
 import android.location.Location
-import androidx.lifecycle.SavedStateHandle
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.simpleweatherapp.data.bingmaps.MapsRepository
 import com.example.simpleweatherapp.data.openweather.WeatherRepository
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
@@ -25,13 +23,20 @@ class WeatherViewModel(
     val savedState: SavedStateHandle
 ) : ViewModel() {
 
-    private val _favLocationList: MutableSharedFlow<List<ShortLocation>> =
-        oneEventBufferedSharedFlow()
-    val favLocationList: SharedFlow<List<ShortLocation>> = _favLocationList.asSharedFlow()
+    val favLocationList: LiveData<List<ShortLocation>> =
+        mapsRepository.observeFavLocationList().map { result ->
+        if (result is Result.Success) {
+            result.data
+        } else {
+            listOf()
+        }
+    }
 
-    private val _favWeatherList: MutableSharedFlow<List<ShortWeather>> =
-        oneEventBufferedSharedFlow()
-    val favWeatherList: SharedFlow<List<ShortWeather>> = _favWeatherList.asSharedFlow()
+//    private val _favWeatherList: MutableSharedFlow<List<ShortWeather>> =
+//        oneEventBufferedSharedFlow()
+//    val favWeatherList: Flow<List<ShortWeather>> = favLocationList.map { locations ->
+//
+//    }
 
     private val localUnitSystem: UnitSystem = Locale.getDefault().toUnitSystem()
 
@@ -48,9 +53,6 @@ class WeatherViewModel(
         val nowEpochMillis = (System.currentTimeMillis() / 1000).toInt()
         if (lastWeatherCleanup == null || nowEpochMillis - lastWeatherCleanup > Const.WEATHER_CLEANUP_INTERVAL) {
             viewModelScope.launch {
-                getFavLocations()
-                prepareFavWeather()
-                refreshFavWeather()
                 Timber.d("Cleaning up weather older than" +
                         " ${Const.WEATHER_CLEANUP_INTERVAL / 60 / 60} hours")
                 weatherRepository.deleteOldWeather(nowEpochMillis - Const.WEATHER_CLEANUP_INTERVAL)
@@ -60,23 +62,12 @@ class WeatherViewModel(
 
     }
 
-    suspend fun getFavLocations() {
-        Timber.d("Getting favorite locations")
-        val favLocationsResult = mapsRepository.getFavLocationList()
-        if (favLocationsResult is Result.Success) {
-            Timber.d("Got favorite locations = $favLocationsResult")
-            _favLocationList.emit(favLocationsResult.data)
-            _isWeatherAvailable.emit(true)
-        } else {
-            Timber.d("Failed to get favorite locations = $favLocationsResult")
-            _isWeatherAvailable.emit(false)
-        }
-    }
-
-    private suspend fun prepareFavWeather() {
-        Timber.d("Preparing weather for Favorites list")
-        if (isWeatherAvailable.first()) {
-            for (loc in favLocationList.first()) {
+    fun getFavWeather(): List<ShortWeather> {
+        Timber.d("Getting weather for Favorites list")
+        var favWeather: List<ShortWeather> = listOf()
+        viewModelScope.launch {
+            val locations = favLocationList.value!!
+            for (loc in locations) {
                 val weatherResult = weatherRepository.getWeather(loc, localUnitSystem)
                 if (weatherResult is Result.Error) {
                     Timber.d("Weather repo returned error=$weatherResult")
@@ -85,23 +76,28 @@ class WeatherViewModel(
             }
             Timber.d("Weather successfully prepared")
             _isWeatherAvailable.emit(true)
+            val
+            favWeather = (weatherRepository.getFavWeatherList(locations) as Result.Success).data
         }
+        return favWeather
     }
 
-    suspend fun refreshFavWeather() {
-        Timber.d("Setting favWeatherList")
-        if (isWeatherAvailable.first()) {
-            val favWeatherResult = weatherRepository.getFavWeatherList(favLocationList.first())
-            if (favWeatherResult is Result.Success) {
-                Timber.d("Got favWeatherList = $favWeatherResult")
-                _favWeatherList.emit(favWeatherResult.data)
-                _isWeatherAvailable.emit(true)
-            } else {
-                Timber.d("Failed to get favWeatherList = $favWeatherResult")
-                _isWeatherAvailable.emit(false)
-            }
-        }
-    }
+//    fun refreshFavWeather() {
+//        Timber.d("Setting favWeatherList")
+//        viewModelScope.launch {
+//            if (isWeatherAvailable.first()) {
+//                val favWeatherResult = weatherRepository.getFavWeatherList(favLocationList.first())
+//                if (favWeatherResult is Result.Success) {
+//                    Timber.d("Got favWeatherList = $favWeatherResult")
+//                    _favWeatherList.emit(favWeatherResult.data)
+//                    _isWeatherAvailable.emit(true)
+//                } else {
+//                    Timber.d("Failed to get favWeatherList = $favWeatherResult")
+//                    _isWeatherAvailable.emit(false)
+//                }
+//            }
+//        }
+//    }
 
     fun setWeather() {
         viewModelScope.launch {

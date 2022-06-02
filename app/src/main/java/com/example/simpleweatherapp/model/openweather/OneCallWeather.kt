@@ -9,7 +9,6 @@ import java.time.LocalTime
 import java.util.*
 
 @Entity(tableName = "one_call_weather")
-@TypeConverters(Converters::class)
 data class OneCallWeather(
     @PrimaryKey  @ColumnInfo(name = "date_time") val dateTime: LocalDateTime,
     val temp: Int,
@@ -23,10 +22,12 @@ data class OneCallWeather(
     @ColumnInfo(name = "wind_deg") val windDeg: Int,
     @ColumnInfo(name = "weather_title") val weatherTitle: String,
     @ColumnInfo(name = "weather_icon") val weatherIcon: String,
-    @Ignore var hourlyForecast: List<HourlyForecast>? = null,
-    @Ignore var dailyForecast: List<DailyForecast>? = null,
     var name: String? = null
-)
+) {
+//    constructor() : this(LocalDateTime.now(), 0, 0, 0, 0, 0, 0, 0, 0, 0, "", "")
+    @Ignore var hourlyForecast: List<HourlyForecast>? = null
+    @Ignore var dailyForecast: List<DailyForecast>? = null
+}
 
 @Entity(tableName = "hourly_forecast", foreignKeys = arrayOf(
     ForeignKey(
@@ -37,7 +38,7 @@ data class OneCallWeather(
         onUpdate = ForeignKey.CASCADE
     )))
 data class HourlyForecast(
-    @ColumnInfo(name = "parent_date_time") val parentDateTime: LocalDateTime,
+    @PrimaryKey  @ColumnInfo(name = "parent_date_time") val parentDateTime: LocalDateTime,
     @ColumnInfo(name = "date_epoch") val dateEpoch: Long,
     val time: LocalTime,
     val temp: Int,
@@ -53,7 +54,7 @@ data class HourlyForecast(
         onUpdate = ForeignKey.CASCADE
     )))
 data class DailyForecast(
-    @ColumnInfo(name = "parent_date_time") val parentDateTime: LocalDateTime,
+    @PrimaryKey  @ColumnInfo(name = "parent_date_time") val parentDateTime: LocalDateTime,
     val date: LocalDate,
     @ColumnInfo(name = "morn_temp") val mornTemp: Int,
     @ColumnInfo(name = "day_temp") val dayTemp: Int,

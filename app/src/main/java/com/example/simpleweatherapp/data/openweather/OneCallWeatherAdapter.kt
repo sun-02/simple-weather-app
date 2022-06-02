@@ -56,7 +56,7 @@ class OneCallWeatherAdapter {
                 )
             )
         }
-        return OneCallWeather(
+        val ocw = OneCallWeather(
             dateTime = currentDateTime,
             temp = r.current.temp.toInt(),
             feelsLike = r.current.feels_like.toInt(),
@@ -69,9 +69,12 @@ class OneCallWeatherAdapter {
             windDeg = r.current.wind_deg,
             weatherTitle = r.current.weather[0].main,
             weatherIcon = r.current.weather[0].icon,
-            hourlyForecast = hourlyForecast,
-            dailyForecast = dailyForecast
         )
+        ocw.let {
+            it.hourlyForecast = hourlyForecast
+            it.dailyForecast = dailyForecast
+        }
+        return ocw
     }
 
     @ToJson

@@ -13,6 +13,7 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.*
@@ -49,8 +50,6 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
         private const val ACCESS_COARSE_LOCATION_PERMISSIONS_REQUEST = 1
     }
 
-    private var menu: Menu? = null
-
     private var isFavorite: Boolean = false
 
     private val args: WeatherFragmentArgs by navArgs()
@@ -69,10 +68,10 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
     private var _binding: FragmentWeatherBinding? = null
     private val binding get() = _binding!!
 
-    private var _hourlyForecastAdapter: HourlyForecastAdapter? = HourlyForecastAdapter()
+    private var _hourlyForecastAdapter: HourlyForecastAdapter? = null
     private val hourlyForecastAdapter get() = _hourlyForecastAdapter!!
 
-    private var _dailyForecastAdapter: DailyForecastAdapter? = DailyForecastAdapter(this)
+    private var _dailyForecastAdapter: DailyForecastAdapter? = null
     private val dailyForecastAdapter get() = _dailyForecastAdapter!!
 
     override fun onCreateView(
@@ -87,12 +86,16 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.d("onViewCreated started")
-
         _application = requireContext().applicationContext as SimpleWeatherApplication
+        _dailyForecastAdapter = DailyForecastAdapter(this)
+        _hourlyForecastAdapter = HourlyForecastAdapter()
+        Timber.d("Preparing weather UI")
+        setupWeather()
+    }
 
-
-
+    private fun setupWeather() {
         lifecycleScope.launch {
+            Timber.d("Collecting weather availability")
             viewModel.isWeatherAvailable.collect { isAvailable ->
                 if (!isAvailable) {
                     val dialog = ApiUnavailableDialogFragment()
@@ -103,35 +106,27 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
                 }
             }
         }
-        Timber.d("Preparing weather UI")
-        setupWeather()
-        lifecycleScope.launch {
-            viewModel.currentWeather.collect {
-                Timber.d("Binding weather UI")
-                bindWeather(it)
-            }
-        }
-    }
-
-    private fun setupWeather() {
         binding.apply {
             toolbarWeather.apply {
+                Timber.d("Toolbar setup")
                 setToolbarLayoutTopMarginWithRespectOfStatusBarHeight(getStatusBarHeight())
                 Timber.d("ToolbarLayoutTopMargin is set")
                 setNavigationOnClickListener(this@WeatherFragment)
-                inflateMenu(R.menu.menu_main)
                 setOnMenuItemClickListener(this@WeatherFragment)
-                this@WeatherFragment.menu = menu
             }
             lifecycleScope.launch {
-                viewModel.favLocationList.collect {
+                Timber.d("Observing addTo/removeFrom favorites button click")
+                viewModel.favLocationList.observe(viewLifecycleOwner) { locations ->
                     val sLocation = viewModel.savedState.get<ShortLocation>(Const.LAST_LOCATION_KEY)
-                    if (it.contains(sLocation)) {
-                        isFavorite = true
-                        menu!!.getItem(0).setIcon(R.drawable.ic_heart_filled_24dp)
-                    } else {
-                        isFavorite = false
-                        menu!!.getItem(0).setIcon(R.drawable.ic_heart_24dp)
+                    toolbarWeather.menu!!.getItem(0).apply {
+                        if (locations.contains(sLocation)) {
+                            isFavorite = true
+                            setIcon(R.drawable.ic_heart_filled_24dp)
+                        } else {
+                            isFavorite = false
+                            setIcon(R.drawable.ic_heart_24dp)
+                        }
+                        Timber.d("Weather isFavorite = $isFavorite")
                     }
                 }
             }
@@ -153,9 +148,17 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
             swiperefresh.setOnRefreshListener(this@WeatherFragment)
         }
         Timber.d("Weather UI is prepared")
+
+        lifecycleScope.launch {
+            Timber.d("Collecting weather changes")
+            viewModel.currentWeather.collect {
+                bindWeather(it)
+            }
+        }
     }
 
     private fun bindWeather(weather: OneCallWeather) {
+        Timber.d("Binding weather UI")
         val titlePopPlace = weather.name!!.split(", ")[0]
         val titleTime = weather.dateTime.toLocalTime().format(timeFormatter)
 
@@ -262,7 +265,7 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
         Timber.d("Skeleton is on")
         if (args.newShortLocation != null) {
             Timber.d("Set VM weather from args")
-            viewModel.setWeather(args.newShortLocation)
+            viewModel.setWeather(args.newShortLocation!!)
             return
         }
         Timber.d("Set VM weather with location API")
@@ -352,17 +355,6 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
         Timber.d("Navigating to ForecastExtendedFragment")
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _hourlyForecastAdapter = null
-        _dailyForecastAdapter = null
-        binding.rvHourlyForecast.adapter = null
-        binding.rvDailyForecast.adapter = null
-        _binding = null
-        _application = null
-        Timber.d("_binding and _application cleared")
-    }
-
     override fun onClick(dialog: DialogInterface?, which: Int) {
         when (which) {
             DialogInterface.BUTTON_POSITIVE -> {
@@ -381,29 +373,39 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
 
     override fun onClick(v: View?) {
         if (v is ImageButton) {
-            Timber.d("Got toolbar nav button click. Navigation to SavedLocationsFragment")
-
+            Timber.d("Got toolbar nav button click. Navigating to SavedLocationsFragment")
+            val action = WeatherFragmentDirections.actionToSavedLocationsFragment()
+            findNavController().navigate(action)
         }
     }
 
     override fun onMenuItemClick(item: MenuItem?): Boolean =
         when (item!!.itemId) {
-            R.id.add_to_favorites_button -> {
-                Timber.d("Got \"add_to_favorites_button\" click")
-                val sLocation = viewModel.savedState.get<ShortLocation>(Const.LAST_LOCATION_KEY)
-                Timber.d("Got sLocation = $sLocation from saved state")
+            R.id.add_to_remove_from_favorites_button -> {
+                Timber.d("Got \"add_to_remove_from_favorites_button\" click")
+                val currentLocation = viewModel.savedState.get<ShortLocation>(Const.LAST_LOCATION_KEY)
+                Timber.d("Got sLocation = $currentLocation from saved state")
                 if (isFavorite) {
-                    viewModel.removeFavLocation(sLocation!!.name)
-                    Timber.d("Removing sLocation = $sLocation from favorites")
+                    viewModel.removeFavLocation(currentLocation!!.name)
+                    Timber.d("Removed sLocation = $currentLocation from favorites")
                 } else {
-                    viewModel.addFavLocation(sLocation!!)
-                    Timber.d("Adding sLocation = $sLocation to favorites")
-                }
-                lifecycleScope.launch {
-                    viewModel.refreshFavWeather()
+                    viewModel.addFavLocation(currentLocation!!)
+                    Timber.d("Added sLocation = $currentLocation to favorites")
                 }
                 true
             }
             else -> false
         }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _hourlyForecastAdapter = null
+        _dailyForecastAdapter = null
+        binding.rvHourlyForecast.adapter = null
+        binding.rvDailyForecast.adapter = null
+        _binding = null
+        _application = null
+        Timber.d("_binding, adapters and _application cleared")
+    }
 }

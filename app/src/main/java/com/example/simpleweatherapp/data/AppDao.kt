@@ -1,5 +1,6 @@
 package com.example.simpleweatherapp.data
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.example.simpleweatherapp.model.openweather.DailyForecast
@@ -29,7 +30,7 @@ interface AppDao {
     suspend fun getOneCallWeather(name: String): OneCallWeather?
 
     @Query("SELECT `name`, `temp`, weather_icon FROM one_call_weather WHERE name = (:names)")
-    suspend fun getShortWeatherList(names: List<String>): List<ShortWeather>?
+    fun getFavWeatherList(names: List<String>): List<ShortWeather>?
 
     @Query("DELETE FROM one_call_weather WHERE date_time < :latestDateEpochSeconds")
     suspend fun deleteOldWeather(latestDateEpochSeconds: Int)
@@ -38,7 +39,7 @@ interface AppDao {
     suspend fun insertFavLocation(sLocation: ShortLocation)
 
     @Query("SELECT * FROM short_location")
-    suspend fun getFavLocationList(): List<ShortLocation>?
+    fun observeFavLocationList(): LiveData<List<ShortLocation>?>
 
     @Query("DELETE FROM short_location WHERE name = :name")
     suspend fun deleteShortLocation(name: String)

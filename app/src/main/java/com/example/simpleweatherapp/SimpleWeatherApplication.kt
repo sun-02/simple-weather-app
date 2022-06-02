@@ -15,7 +15,7 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import timber.log.Timber
 
 class SimpleWeatherApplication : Application() {
-    private val database = AppDatabase.getDatabase(this)
+    val database: AppDatabase by lazy { AppDatabase.getDatabase(this) }
 
     val mapsRepository: MapsRepository by lazy {
         val moshi = Moshi.Builder()

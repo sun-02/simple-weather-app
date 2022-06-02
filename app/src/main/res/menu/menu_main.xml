@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/add_to_favorites_button"
+        android:id="@+id/add_to_remove_from_favorites_button"
         android:icon="@drawable/ic_heart_24dp"
         android:title="@string/add_to_favorites"
         android:contentDescription="@string/add_to_favorites"

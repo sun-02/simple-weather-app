@@ -11,6 +11,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simpleweatherapp.R
+import com.example.simpleweatherapp.ResourcesMapping.weatherIconsRes
 import com.example.simpleweatherapp.ResourcesMapping.weatherImagesRes
 import com.example.simpleweatherapp.SimpleWeatherApplication
 import com.example.simpleweatherapp.databinding.FragmentSavedLocationsBinding
@@ -60,22 +61,21 @@ class SavedLocationsFragment : Fragment(), OnItemClickListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         Timber.d("onViewCreated start")
         binding.toolbarSavedLocations
             .setToolbarLayoutTopMarginWithRespectOfStatusBarHeight(getStatusBarHeight())
         Timber.d("ToolbarLayoutTopMargin set")
-
         _application = requireContext().applicationContext as SimpleWeatherApplication
 
         var _currentWeather: OneCallWeather? = null
         lifecycleScope.launch {
             _currentWeather = viewModel.currentWeather.first()
+            Timber.d("Got current weather = $_currentWeather")
         }
 
         val currentWeather = _currentWeather!!
         val weatherRes =
-            weatherImagesRes[currentWeather.weatherIcon] ?: R.drawable.ic_unavailable
+            weatherIconsRes[currentWeather.weatherIcon] ?: R.drawable.ic_unavailable
         val tempFormatted =
             getString(R.string.temp_n_dew_point_formatted, intToSignedString(currentWeather.temp))
 
@@ -85,6 +85,7 @@ class SavedLocationsFragment : Fragment(), OnItemClickListener {
             tvFavLocation.text = currentWeather.name!!.split(", ")[0]
             ivFavWeather.setImageResource(weatherRes)
             tvFavTemp.text = tempFormatted
+            Timber.d("Current weather UI is set")
         }
 
         val dailyForecastItemDivider = DividerItemDecoration(requireContext(),
@@ -94,25 +95,19 @@ class SavedLocationsFragment : Fragment(), OnItemClickListener {
         )
         binding.rvFavoriteLocations.addItemDecoration(dailyForecastItemDivider)
         binding.rvFavoriteLocations.adapter = favoriteLocationsAdapter
-        lifecycleScope.launch {
-            viewModel.favLocationList.collect {
-                _favLocations = it
-                viewModel.refreshFavWeather()
-            }
-        }
-        lifecycleScope.launch {
-            viewModel.favWeatherList.collect {
-                favoriteLocationsAdapter.submitList(it)
-            }
+        Timber.d("RV for fav locations is set")
+        Timber.d("Observing fav locations")
+        viewModel.favLocationList.observe(viewLifecycleOwner) {
+            _favLocations = it
+            Timber.d("Got fav locations = $it")
+            val favWeather = viewModel.getFavWeather()
+            Timber.d("Got fav weather = $favWeather")
+            favoriteLocationsAdapter.submitList(favWeather)
         }
     }
 
     override fun onItemClick(view: View?, position: Int) {
         viewModel.removeFavLocation(favLocations[position].name)
-        lifecycleScope.launch {
-            viewModel.getFavLocations()
-            viewModel.refreshFavWeather()
-        }
     }
 
     override fun onDestroy() {

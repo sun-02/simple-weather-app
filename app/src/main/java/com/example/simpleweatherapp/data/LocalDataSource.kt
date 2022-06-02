@@ -1,5 +1,7 @@
 package com.example.simpleweatherapp.data
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.map
 import com.example.simpleweatherapp.model.openweather.OneCallWeather
 import com.example.simpleweatherapp.model.Result
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
@@ -65,7 +67,7 @@ class LocalDataSource(private val appDao: AppDao) {
         val names = sLocationList.map { sLocation -> sLocation.name }
         return withContext(Dispatchers.IO) {
             return@withContext try {
-                val sWeatherList: List<ShortWeather>? = appDao.getShortWeatherList(names)
+                val sWeatherList: List<ShortWeather>? = appDao.getFavWeatherList(names)
                 if (sWeatherList != null) {
                     Timber.d("Got sWeatherList=$sLocationList from local source")
                     Result.Success(sWeatherList)
@@ -86,23 +88,18 @@ class LocalDataSource(private val appDao: AppDao) {
             appDao.insertFavLocation(sLocation)
         }
 
-    suspend fun getFavLocationList(): Result<List<ShortLocation>> =
-        withContext(Dispatchers.IO) {
-            return@withContext try {
-                val favLocationList = appDao.getFavLocationList()
-                Timber.d("Got locationList=$favLocationList from local source")
-                if (favLocationList == null) {
-                    Timber.d("Location list null. Setting with empty list")
-                    val emptyList: List<ShortLocation> = listOf()
-                    Result.Success(emptyList)
-                } else {
-                    Result.Success(favLocationList)
-                }
-            } catch (e: Exception) {
-                Timber.d("Location remote source returned error=$e")
-                Result.Error(-1, e.toString())
+    fun observeFavLocationList(): LiveData<Result<List<ShortLocation>>> {
+        return appDao.observeFavLocationList().map { favLocationList ->
+            Timber.d("Got locationList=$favLocationList from local source")
+            if (favLocationList == null) {
+                Timber.d("Location list null. Setting with empty list")
+                val emptyList: List<ShortLocation> = listOf()
+                Result.Success(emptyList)
+            } else {
+                Result.Success(favLocationList)
             }
         }
+    }
 
     suspend fun deleteFavLocation(name: String) =
         withContext(Dispatchers.IO) {
