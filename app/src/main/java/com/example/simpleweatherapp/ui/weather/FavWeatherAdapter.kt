@@ -61,6 +61,7 @@ class FavWeatherAdapter(
                 tvFavTemp.text = tempFormatted
                 ivFavRemove.setOnClickListener(this@FavWeatherViewHolder)
             }
+            itemView.setOnClickListener(this)
         }
 
         override fun onClick(v: View?) {

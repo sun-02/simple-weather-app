@@ -76,8 +76,10 @@ class WeatherViewModel(
             }
             Timber.d("Weather successfully prepared")
             _isWeatherAvailable.emit(true)
-            val
-            favWeather = (weatherRepository.getFavWeatherList(locations) as Result.Success).data
+            val res = weatherRepository.getFavWeatherList(locations)
+            if (res is Result.Success) {
+                favWeather = res.data
+            }
         }
         return favWeather
     }

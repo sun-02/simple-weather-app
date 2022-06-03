@@ -8,6 +8,7 @@ import androidx.appcompat.content.res.AppCompatResources as Acr
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simpleweatherapp.R
@@ -62,8 +63,12 @@ class SavedLocationsFragment : Fragment(), OnItemClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.d("onViewCreated start")
-        binding.toolbarSavedLocations
-            .setToolbarLayoutTopMarginWithRespectOfStatusBarHeight(getStatusBarHeight())
+        binding.toolbarSavedLocations.apply {
+            setToolbarLayoutTopMarginWithRespectOfStatusBarHeight(getStatusBarHeight())
+            setNavigationOnClickListener {
+                findNavController().navigateUp()
+            }
+        }
         Timber.d("ToolbarLayoutTopMargin set")
         _application = requireContext().applicationContext as SimpleWeatherApplication
 
@@ -107,7 +112,9 @@ class SavedLocationsFragment : Fragment(), OnItemClickListener {
     }
 
     override fun onItemClick(view: View?, position: Int) {
-        viewModel.removeFavLocation(favLocations[position].name)
+        TODO("Отловить какая вьюшка прислала клик: itemView или удалить. юзаем снекбар")
+        TODO("Найти, что с БД")
+//        viewModel.removeFavLocation(favLocations[position].name)
     }
 
     override fun onDestroy() {
