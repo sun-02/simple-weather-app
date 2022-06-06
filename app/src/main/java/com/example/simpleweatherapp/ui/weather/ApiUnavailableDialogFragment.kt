@@ -5,12 +5,9 @@ import android.app.Dialog
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.View
 import androidx.fragment.app.DialogFragment
-import androidx.navigation.fragment.navArgs
 import com.example.simpleweatherapp.R
 import timber.log.Timber
-import java.lang.Exception
 
 class ApiUnavailableDialogFragment : DialogFragment() {
 

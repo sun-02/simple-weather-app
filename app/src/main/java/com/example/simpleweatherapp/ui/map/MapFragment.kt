@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.marginTop
 import androidx.fragment.app.Fragment
-import androidx.navigation.fragment.findNavController
 import com.example.simpleweatherapp.BuildConfig
 import com.example.simpleweatherapp.R
 import com.example.simpleweatherapp.databinding.FragmentMapBinding

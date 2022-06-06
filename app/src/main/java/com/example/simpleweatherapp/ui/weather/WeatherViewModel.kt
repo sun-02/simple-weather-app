@@ -49,22 +49,27 @@ class WeatherViewModel(
 
 
     init {
+        cleanOldWeather()
+
+    }
+
+    private fun cleanOldWeather() {
         val lastWeatherCleanup = savedState.get<Int>(Const.LAST_WEATHER_CLEANUP)
         val nowEpochMillis = (System.currentTimeMillis() / 1000).toInt()
         if (lastWeatherCleanup == null || nowEpochMillis - lastWeatherCleanup > Const.WEATHER_CLEANUP_INTERVAL) {
             viewModelScope.launch {
-                Timber.d("Cleaning up weather older than" +
-                        " ${Const.WEATHER_CLEANUP_INTERVAL / 60 / 60} hours")
+                Timber.d(
+                    "Cleaning up weather older than" +
+                            " ${Const.WEATHER_CLEANUP_INTERVAL / 60 / 60} hours"
+                )
                 weatherRepository.deleteOldWeather(nowEpochMillis - Const.WEATHER_CLEANUP_INTERVAL)
             }
             savedState.set(Const.LAST_WEATHER_CLEANUP, nowEpochMillis)
         }
-
     }
 
     fun getFavWeather(): List<ShortWeather> {
         Timber.d("Getting weather for Favorites list")
-        var favWeather: List<ShortWeather> = listOf()
         viewModelScope.launch {
             val locations = favLocationList.value!!
             for (loc in locations) {
@@ -78,10 +83,11 @@ class WeatherViewModel(
             _isWeatherAvailable.emit(true)
             val res = weatherRepository.getFavWeatherList(locations)
             if (res is Result.Success) {
-                favWeather = res.data
-            }
+                return@launch res.data
+//            } else {
+//                EmptyL
+//            }
         }
-        return favWeather
     }
 
 //    fun refreshFavWeather() {
@@ -101,7 +107,7 @@ class WeatherViewModel(
 //        }
 //    }
 
-    fun setWeather() {
+    fun refreshWeather() {
         viewModelScope.launch {
             val sLocation = savedState.get<ShortLocation>(Const.LAST_LOCATION_KEY)
             if (sLocation == null) {
@@ -110,11 +116,11 @@ class WeatherViewModel(
                 return@launch
             }
             Timber.d("Got location from SavedStateHandle ${sLocation.name}")
-            setWeather(sLocation)
+            refreshWeather(sLocation)
         }
     }
 
-    fun setWeather(location: Location) {
+    fun refreshWeather(location: Location) {
         viewModelScope.launch {
             val mapsResult = mapsRepository
                 .getRemoteLocation(location.latitude, location.longitude)
@@ -127,14 +133,14 @@ class WeatherViewModel(
                     val sLocation: ShortLocation = mapsResult.data[0]
                     Timber.d("Got sLocation by coords from repo ${sLocation.name}")
                     savedState.set(Const.LAST_LOCATION_KEY, sLocation)
-                    Timber.d("Saved last sLocation=\"${sLocation.name}\" in SavedStateHandle")
-                    setWeather(sLocation)
+                    Timber.d("sLocation=\"${sLocation.name}\" saved to SavedStateHandle")
+                    refreshWeather(sLocation)
                 }
             }
         }
     }
 
-    fun setWeather(sLocation: ShortLocation) {
+    fun refreshWeather(sLocation: ShortLocation) {
         viewModelScope.launch {
             val weatherResult = weatherRepository.getWeather(
                 sLocation,

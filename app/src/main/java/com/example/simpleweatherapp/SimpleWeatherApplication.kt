@@ -34,7 +34,6 @@ class SimpleWeatherApplication : Application() {
 
     val weatherRepository: WeatherRepository by lazy {
         val moshi = Moshi.Builder()
-            .add(OneCallWeatherAdapter())
             .build()
 
         val retrofit = Retrofit.Builder()

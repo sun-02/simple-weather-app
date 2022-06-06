@@ -1,6 +1,5 @@
 package com.example.simpleweatherapp.data.openweather
 
-import androidx.lifecycle.LiveData
 import com.example.simpleweatherapp.model.Result
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.example.simpleweatherapp.model.openweather.OneCallWeather

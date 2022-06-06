@@ -6,7 +6,6 @@ import com.example.simpleweatherapp.data.bingmaps.BingMapsService
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.example.simpleweatherapp.data.bingmaps.ShortLocationsAdapter
 import com.example.simpleweatherapp.model.openweather.OneCallWeather
-import com.example.simpleweatherapp.data.openweather.OneCallWeatherAdapter
 import com.example.simpleweatherapp.data.openweather.OpenWeatherService
 import com.example.simpleweatherapp.model.openweather.UnitSystem
 import com.squareup.moshi.Moshi
@@ -45,7 +44,6 @@ class ExampleUnitTest {
     fun retrofitRequestToOneCallWeather() {
         val (latitude, longitude) = Pair(47.64054,-122.12934)
         val moshi: Moshi = Moshi.Builder()
-            .add(OneCallWeatherAdapter())
             .build()
 
         val retrofit: Retrofit = Retrofit.Builder()
@@ -56,7 +54,7 @@ class ExampleUnitTest {
 
         var result: Response<OneCallWeather>? = null
         runBlocking {
-            result = service.fetchOneCallWeather(latitude, longitude, UnitSystem.METRIC)
+            result = service.fetchOpenWeather(latitude, longitude, UnitSystem.METRIC)
             println(result!!.body())
         }
     }

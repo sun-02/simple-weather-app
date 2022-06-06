@@ -23,8 +23,8 @@ data class ShortLocation(
         parcel.readString()!!,
         parcel.readString()!!,
         parcel.readString()!!,
-        parcel.readDouble()!!,
-        parcel.readDouble()!!
+        parcel.readDouble(),
+        parcel.readDouble()
     )
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {

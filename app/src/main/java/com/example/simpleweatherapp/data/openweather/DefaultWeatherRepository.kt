@@ -4,8 +4,10 @@ import com.example.simpleweatherapp.data.LocalDataSource
 import com.example.simpleweatherapp.model.Result
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.example.simpleweatherapp.model.openweather.OneCallWeather
+import com.example.simpleweatherapp.model.openweather.OpenWeatherResponse
 import com.example.simpleweatherapp.model.openweather.ShortWeather
 import com.example.simpleweatherapp.model.openweather.UnitSystem
+import com.example.simpleweatherapp.util.DataUtils
 import timber.log.Timber
 
 class DefaultWeatherRepository(
@@ -17,25 +19,23 @@ class DefaultWeatherRepository(
         sLocation: ShortLocation,
         unitSystem: UnitSystem
     ): Result<OneCallWeather> {
-        return when (val weatherResult = getRemoteWeather(sLocation, unitSystem)) {
-            is Result.Success -> {
-                Timber.d("Got weather=$weatherResult from remote source")
-                weatherResult.data.name = sLocation.name
-                Timber.d("Name=${sLocation.name} added to weather")
-                saveWeather(weatherResult.data)
-                weatherResult
-            }
-            is Result.Error -> {
-                Timber.d("Weather remote source returned error=$weatherResult")
-                getLocalWeather(sLocation.name)
-            }
+        val weatherResult = getRemoteWeather(sLocation, unitSystem)
+        return if (weatherResult is Result.Success) {
+            Timber.d("Got weather=$weatherResult from remote source")
+            val weather = DataUtils.getOneCallWeather(sLocation, weatherResult.data)
+            saveWeather(weather)
+            Timber.d("Weather $weather saved to database")
+            Result.Success(weather)
+        } else {
+            Timber.d("Weather remote source returned error=$weatherResult")
+            getLocalWeather(sLocation.name)
         }
     }
 
     private suspend fun getRemoteWeather(
         sLocation: ShortLocation,
          unitSystem: UnitSystem
-    ): Result<OneCallWeather> = remoteWeatherDataSource.fetchOneCallWeather(
+    ): Result<OpenWeatherResponse> = remoteWeatherDataSource.getOpenWeather(
             sLocation.latitude,
             sLocation.longitude,
             unitSystem

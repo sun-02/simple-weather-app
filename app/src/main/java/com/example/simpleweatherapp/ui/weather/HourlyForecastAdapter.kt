@@ -18,7 +18,7 @@ class HourlyForecastAdapter : ListAdapter<HourlyForecast,
     companion object DiffCallback : DiffUtil.ItemCallback<HourlyForecast>() {
 
         override fun areItemsTheSame(oldItem: HourlyForecast, newItem: HourlyForecast): Boolean {
-            return oldItem.dateEpoch == newItem.dateEpoch
+            return oldItem.dateTime == newItem.dateTime
         }
 
         override fun areContentsTheSame(oldItem: HourlyForecast, newItem: HourlyForecast): Boolean {
@@ -53,7 +53,7 @@ class HourlyForecastAdapter : ListAdapter<HourlyForecast,
                 weatherIconsRes[hf.weatherIcon] ?: R.drawable.ic_unavailable
 
             binding.apply {
-                tvHour.text = hf.time.format(timeFormatter)
+                tvHour.text = hf.dateTime.format(timeFormatter)
                 ivWeather.setImageResource(weatherIconRes)
                 tvTemp.text = tempFormatted
             }

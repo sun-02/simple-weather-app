@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.content.res.AppCompatResources as Acr
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -13,20 +12,18 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simpleweatherapp.R
 import com.example.simpleweatherapp.ResourcesMapping.weatherIconsRes
-import com.example.simpleweatherapp.ResourcesMapping.weatherImagesRes
 import com.example.simpleweatherapp.SimpleWeatherApplication
 import com.example.simpleweatherapp.databinding.FragmentSavedLocationsBinding
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.example.simpleweatherapp.model.openweather.OneCallWeather
-import com.example.simpleweatherapp.model.openweather.ShortWeather
 import com.example.simpleweatherapp.ui.OnItemClickListener
 import com.example.simpleweatherapp.util.getStatusBarHeight
 import com.example.simpleweatherapp.util.intToSignedString
 import com.example.simpleweatherapp.util.setToolbarLayoutTopMarginWithRespectOfStatusBarHeight
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import androidx.appcompat.content.res.AppCompatResources as Acr
 
 class SavedLocationsFragment : Fragment(), OnItemClickListener {
 

@@ -11,6 +11,6 @@ object DateTimeFormatters {
         DateTimeFormatter.ofPattern("MMMM d - H:mm", Locale("en", "US"))
     val dowFormatter: DateTimeFormatter =
         DateTimeFormatter.ofPattern("EEEE", Locale("en", "US"))
-    val dowShortFormatter =
+    val dowShortFormatter: DateTimeFormatter =
         DateTimeFormatter.ofPattern("EE", Locale("en", "US"))
 }

@@ -8,7 +8,7 @@
     <string name="weather_unavailable">Weather data unavailable. Check internet connection</string>
     <string name="unavailable">N/A</string>
     <string name="retry">retry</string>
-    <string name="refresh">refresh</string>
+    <string name="refresh">REFRESH</string>
     <string name="exit">exit</string>
     <string name="data_outdated">Weather data is outdated. Check internet connection</string>
 

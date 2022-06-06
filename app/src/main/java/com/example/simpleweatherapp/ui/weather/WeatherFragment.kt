@@ -5,7 +5,10 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.DialogInterface
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.appcompat.content.res.AppCompatResources
 import androidx.appcompat.widget.Toolbar
@@ -13,25 +16,26 @@ import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.NavDirections
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.*
+import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.simpleweatherapp.Const
 import com.example.simpleweatherapp.DateTimeFormatters.timeFormatter
 import com.example.simpleweatherapp.R
-import com.example.simpleweatherapp.SimpleWeatherApplication
-import com.example.simpleweatherapp.databinding.FragmentWeatherBinding
-import com.example.simpleweatherapp.model.openweather.OneCallWeather
-import com.example.simpleweatherapp.ui.OnItemClickListener
-import com.example.simpleweatherapp.util.*
 import com.example.simpleweatherapp.ResourcesMapping.uviIconsRes
 import com.example.simpleweatherapp.ResourcesMapping.weatherImagesRes
 import com.example.simpleweatherapp.ResourcesMapping.windDirectionsRes
+import com.example.simpleweatherapp.SimpleWeatherApplication
+import com.example.simpleweatherapp.databinding.FragmentWeatherBinding
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
+import com.example.simpleweatherapp.model.openweather.OneCallWeather
+import com.example.simpleweatherapp.ui.OnItemClickListener
+import com.example.simpleweatherapp.util.*
 import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.tasks.*
+import com.google.android.gms.tasks.CancellationTokenSource
 import com.google.android.material.snackbar.Snackbar
 import com.vmadalin.easypermissions.EasyPermissions
 import com.vmadalin.easypermissions.dialogs.SettingsDialog
@@ -114,22 +118,6 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
                 setNavigationOnClickListener(this@WeatherFragment)
                 setOnMenuItemClickListener(this@WeatherFragment)
             }
-            lifecycleScope.launch {
-                Timber.d("Observing addTo/removeFrom favorites button click")
-                viewModel.favLocationList.observe(viewLifecycleOwner) { locations ->
-                    val sLocation = viewModel.savedState.get<ShortLocation>(Const.LAST_LOCATION_KEY)
-                    toolbarWeather.menu!!.getItem(0).apply {
-                        if (locations.contains(sLocation)) {
-                            isFavorite = true
-                            setIcon(R.drawable.ic_heart_filled_24dp)
-                        } else {
-                            isFavorite = false
-                            setIcon(R.drawable.ic_heart_24dp)
-                        }
-                        Timber.d("Weather isFavorite = $isFavorite")
-                    }
-                }
-            }
 
             rvHourlyForecast.adapter = hourlyForecastAdapter
             rvDailyForecast.apply {
@@ -147,13 +135,38 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
             }
             swiperefresh.setOnRefreshListener(this@WeatherFragment)
         }
+
+        lifecycleScope.launch {
+            Timber.d("Observing addTo/removeFrom favorites button click")
+            viewModel.favLocationList.observe(viewLifecycleOwner) { locations ->
+                setFavorite(locations)
+            }
+        }
         Timber.d("Weather UI is prepared")
+
 
         lifecycleScope.launch {
             Timber.d("Collecting weather changes")
             viewModel.currentWeather.collect {
                 bindWeather(it)
             }
+        }
+
+        Timber.d("Refreshing location and weather")
+        refreshWeather()
+    }
+
+    private fun setFavorite(locations: List<ShortLocation>) {
+        val sLocation = viewModel.savedState.get<ShortLocation>(Const.LAST_LOCATION_KEY)
+        binding.toolbarWeather.menu!!.getItem(0).apply {
+            if (locations.contains(sLocation)) {
+                isFavorite = true
+                setIcon(R.drawable.ic_heart_filled_24dp)
+            } else {
+                isFavorite = false
+                setIcon(R.drawable.ic_heart_24dp)
+            }
+            Timber.d("Weather isFavorite = $isFavorite")
         }
     }
 
@@ -232,6 +245,8 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
             rvDailyForecastStub.root.visibility = View.GONE
             rvDailyForecast.visibility = View.VISIBLE
 
+            setFavorite(viewModel.favLocationList.value!!)
+
             swiperefresh.isRefreshing = false
             Timber.d("Weather UI binded")
 
@@ -254,18 +269,12 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
             }.show()
     }
 
-    override fun onResume() {
-        super.onResume()
-        Timber.d("Refreshing location and weather")
-        refreshWeather()
-    }
-
     private fun refreshWeather() {
         binding.skeletonLayout.showSkeleton()
         Timber.d("Skeleton is on")
         if (args.newShortLocation != null) {
             Timber.d("Set VM weather from args")
-            viewModel.setWeather(args.newShortLocation!!)
+            viewModel.refreshWeather(args.newShortLocation!!)
             return
         }
         Timber.d("Set VM weather with location API")
@@ -280,28 +289,29 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
 
     @SuppressLint("MissingPermission")
     private fun refreshWeatherWithCurrentLocation() {
-        Timber.d("Getting location from location services")
+        Timber.d("Getting location from fusedLocationClient")
         application.fusedLocationClient.lastLocation.addOnCompleteListener { locationTask ->
-            val lastLocation = locationTask.result
-            if (lastLocation != null &&
-                System.currentTimeMillis() - lastLocation.time < Const.LOCATION_REFRESH_INTERVAL) {
-                Timber.d("Setting VM with last location")
-                viewModel.setWeather(lastLocation)
-            } else {
+//            val lastLocation = locationTask.result
+//            if (lastLocation != null &&
+//                System.currentTimeMillis() - lastLocation.time < Const.LOCATION_REFRESH_INTERVAL) {
+//                Timber.d("Setting VM with last location services location")
+//                viewModel.setWeather(lastLocation)
+//            } else {
                 application.fusedLocationClient.getCurrentLocation(
                     LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY,
                     CancellationTokenSource().token
                 ).addOnCompleteListener {
                     val currentLocation = locationTask.result
                     if (currentLocation != null) {
-                        Timber.d("Setting VM with current location")
-                        viewModel.setWeather(currentLocation)
+                        Timber.d("Got current location:(lat=${currentLocation.latitude}, " +
+                                "lon=${currentLocation.longitude})from fusedLocationClient. Setting VM")
+                        viewModel.refreshWeather(currentLocation)
                     } else {
-                        Timber.d("Setting VM with no location")
-                        viewModel.setWeather()
+                        Timber.d("fusedLocationClient returned null. Setting VM with default location if present")
+                        viewModel.refreshWeather()
                     }
                 }
-            }
+//            }
         }
     }
 

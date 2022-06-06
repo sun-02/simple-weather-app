@@ -29,18 +29,15 @@ class LocalDataSource(private val appDao: AppDao) {
                     return@withContext Result.Error( 2,
                         "Weather not found in local source")
                 }
-
-                val zeroOffset = ZoneOffset.ofTotalSeconds(0)
-                val weatherDateEpochSeconds = oneCallWeather.dateTime
-                    .toEpochSecond(zeroOffset).toInt()
-                val hourlyForecast = appDao.getHourlyForecastList(weatherDateEpochSeconds)
+                val parentName = oneCallWeather.name
+                val hourlyForecast = appDao.getHourlyForecastList(parentName)
                 if (hourlyForecast == null) {
                     Timber.d("Hourly forecast list not found in local source")
                     return@withContext Result.Error( 3,
                         "Hourly forecast list not found in local source")
                 }
 
-                val dailyForecast = appDao.getDailyForecastList(weatherDateEpochSeconds)
+                val dailyForecast = appDao.getDailyForecastList(parentName)
                 if (dailyForecast == null) {
                     Timber.d("Daily forecast list not found in local source")
                     return@withContext Result.Error( 4,

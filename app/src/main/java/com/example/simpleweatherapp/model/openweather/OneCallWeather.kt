@@ -1,16 +1,14 @@
 package com.example.simpleweatherapp.model.openweather
 
 import androidx.room.*
-import com.example.simpleweatherapp.data.Converters
-import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.LocalTime
-import java.util.*
 
 @Entity(tableName = "one_call_weather")
 data class OneCallWeather(
-    @PrimaryKey  @ColumnInfo(name = "date_time") val dateTime: LocalDateTime,
+    @PrimaryKey  var name: String,
+    @ColumnInfo(name = "date_time") val dateTime: LocalDateTime,
     val temp: Int,
     @ColumnInfo(name = "feels_like") val feelsLike: Int,
     val pressure: Int,
@@ -22,39 +20,37 @@ data class OneCallWeather(
     @ColumnInfo(name = "wind_deg") val windDeg: Int,
     @ColumnInfo(name = "weather_title") val weatherTitle: String,
     @ColumnInfo(name = "weather_icon") val weatherIcon: String,
-    var name: String? = null
 ) {
 //    constructor() : this(LocalDateTime.now(), 0, 0, 0, 0, 0, 0, 0, 0, 0, "", "")
     @Ignore var hourlyForecast: List<HourlyForecast>? = null
     @Ignore var dailyForecast: List<DailyForecast>? = null
 }
 
-@Entity(tableName = "hourly_forecast", foreignKeys = arrayOf(
-    ForeignKey(
-        entity = OneCallWeather::class,
-        parentColumns = arrayOf("date_time"),
-        childColumns = arrayOf("parent_date_time"),
-        onDelete = ForeignKey.CASCADE,
-        onUpdate = ForeignKey.CASCADE
-    )))
+@Entity(tableName = "hourly_forecast", foreignKeys = [ForeignKey(
+    entity = OneCallWeather::class,
+    parentColumns = arrayOf("name"),
+    childColumns = arrayOf("parent_name"),
+    onDelete = ForeignKey.CASCADE,
+    onUpdate = ForeignKey.CASCADE
+)], primaryKeys = ["parent_name", "date_time"]
+)
 data class HourlyForecast(
-    @PrimaryKey  @ColumnInfo(name = "parent_date_time") val parentDateTime: LocalDateTime,
-    @ColumnInfo(name = "date_epoch") val dateEpoch: Long,
-    val time: LocalTime,
+    @ColumnInfo(name = "parent_name") val parentName: String,
+    @ColumnInfo(name = "date_time") val dateTime: LocalDateTime,
     val temp: Int,
     @ColumnInfo(name = "weather_icon") val weatherIcon: String
 )
 
-@Entity(tableName = "daily_forecast", foreignKeys = arrayOf(
-    ForeignKey(
-        entity = OneCallWeather::class,
-        parentColumns = arrayOf("date_time"),
-        childColumns = arrayOf("parent_date_time"),
-        onDelete = ForeignKey.CASCADE,
-        onUpdate = ForeignKey.CASCADE
-    )))
+@Entity(tableName = "daily_forecast", foreignKeys = [ForeignKey(
+    entity = OneCallWeather::class,
+    parentColumns = arrayOf("name"),
+    childColumns = arrayOf("parent_name"),
+    onDelete = ForeignKey.CASCADE,
+    onUpdate = ForeignKey.CASCADE
+)], primaryKeys = ["parent_name", "date"]
+)
 data class DailyForecast(
-    @PrimaryKey  @ColumnInfo(name = "parent_date_time") val parentDateTime: LocalDateTime,
+    @ColumnInfo(name = "parent_name") val parentName: String,
     val date: LocalDate,
     @ColumnInfo(name = "morn_temp") val mornTemp: Int,
     @ColumnInfo(name = "day_temp") val dayTemp: Int,

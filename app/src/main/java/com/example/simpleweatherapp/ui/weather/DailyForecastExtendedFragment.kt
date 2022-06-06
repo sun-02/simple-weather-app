@@ -22,7 +22,6 @@ import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
-import java.util.*
 
 class DailyForecastExtendedFragment : Fragment() {
 

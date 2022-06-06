@@ -1,13 +1,9 @@
 package com.example.simpleweatherapp.util
 
-import android.content.Context
 import android.text.Spannable
 import android.text.SpannableString
 import android.text.style.ForegroundColorSpan
 import android.util.ArrayMap
-import androidx.appcompat.content.res.AppCompatResources
-import androidx.core.content.ContextCompat.getColor
-import com.example.simpleweatherapp.R
 
 fun <T : Comparable<T>, U> getResFromRange(
     rangeToResourceMap: ArrayMap<ClosedRange<T>, U>,

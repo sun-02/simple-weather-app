@@ -20,16 +20,16 @@ interface AppDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDailyForecastList(dailyForecastList: List<DailyForecast>)
 
-    @Query("SELECT * FROM hourly_forecast WHERE parent_date_time = :parentDateEpochSeconds")
-    suspend fun getHourlyForecastList(parentDateEpochSeconds: Int): List<HourlyForecast>?
+    @Query("SELECT * FROM hourly_forecast WHERE parent_name = :parentName")
+    suspend fun getHourlyForecastList(parentName: String): List<HourlyForecast>?
 
-    @Query("SELECT * FROM daily_forecast WHERE parent_date_time = :parentDateEpochSeconds")
-    suspend fun getDailyForecastList(parentDateEpochSeconds: Int): List<DailyForecast>?
+    @Query("SELECT * FROM daily_forecast WHERE parent_name = :parentName")
+    suspend fun getDailyForecastList(parentName: String): List<DailyForecast>?
 
     @Query("SELECT * FROM one_call_weather WHERE name = :name")
     suspend fun getOneCallWeather(name: String): OneCallWeather?
 
-    @Query("SELECT `name`, `temp`, weather_icon FROM one_call_weather WHERE name = (:names)")
+    @Query("SELECT `name`, `temp`, weather_icon FROM one_call_weather WHERE name IN (:names)")
     fun getFavWeatherList(names: List<String>): List<ShortWeather>?
 
     @Query("DELETE FROM one_call_weather WHERE date_time < :latestDateEpochSeconds")
