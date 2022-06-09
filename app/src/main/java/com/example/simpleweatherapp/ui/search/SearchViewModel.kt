@@ -27,8 +27,16 @@ class SearchViewModel(
                     _locations.value = result.data
                     _mapsApiAvailable.value = true
                 } else {
-                    _mapsApiAvailable.value = false
+                    checkApiAvailability()
                 }
+            }
+        }
+    }
+
+    private suspend fun checkApiAvailability() {
+        mapsRepository.getRemoteLocationList("London").let { result ->
+            if (result is Result.Error || (result as Result.Success).data.isEmpty()) {
+                _mapsApiAvailable.value = false
             }
         }
     }

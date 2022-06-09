@@ -13,10 +13,10 @@ class DefaultMapsRepository(
     override suspend fun addFavLocation(sLocation: ShortLocation) =
         localDataSource.addFavLocation(sLocation)
 
-    override suspend fun removeFavLocation(name: String) =
-        localDataSource.deleteFavLocation(name)
+    override suspend fun removeFavLocation(sLocation: ShortLocation) =
+        localDataSource.deleteFavLocation(sLocation)
 
-    override fun observeFavLocationList(): LiveData<Result<List<ShortLocation>>> =
+    override fun observeFavLocationList(): LiveData<List<ShortLocation>> =
         localDataSource.observeFavLocationList()
 
     override suspend fun getRemoteLocationList(name: String): Result<List<ShortLocation>> {

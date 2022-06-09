@@ -15,6 +15,8 @@ interface WeatherRepository {
         sLocationList: List<ShortLocation>
     ): Result<List<ShortWeather>>
 
-    suspend fun deleteOldWeather(latestDateEpochSeconds: Int)
+    suspend fun deleteOldWeather(thresholdEpochSeconds: Long)
+
+    suspend fun isWeatherSaved(name: String): Result<Boolean>
 }
 

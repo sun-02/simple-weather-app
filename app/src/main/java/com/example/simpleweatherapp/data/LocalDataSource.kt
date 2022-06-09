@@ -9,7 +9,6 @@ import com.example.simpleweatherapp.model.openweather.ShortWeather
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import timber.log.Timber
-import java.time.ZoneOffset
 
 class LocalDataSource(private val appDao: AppDao) {
 
@@ -48,14 +47,14 @@ class LocalDataSource(private val appDao: AppDao) {
                 oneCallWeather.dailyForecast = dailyForecast
                 return@withContext Result.Success(oneCallWeather)
             } catch (e: Exception) {
-                Timber.d("Weather remote source returned error=$e")
+                Timber.d("Weather local source returned error=$e")
                 Result.Error(-1, e.toString())
             }
         }
 
-    suspend fun deleteOldWeather(latestDateEpochSeconds: Int) =
+    suspend fun deleteOldWeather(thresholdEpochSeconds: Long) =
         withContext(Dispatchers.IO) {
-            appDao.deleteOldWeather(latestDateEpochSeconds)
+            appDao.deleteOldWeather(thresholdEpochSeconds)
         }
 
     suspend fun getFavWeatherList(
@@ -66,14 +65,14 @@ class LocalDataSource(private val appDao: AppDao) {
             return@withContext try {
                 val sWeatherList: List<ShortWeather>? = appDao.getFavWeatherList(names)
                 if (sWeatherList != null) {
-                    Timber.d("Got sWeatherList=$sLocationList from local source")
+                    Timber.d("Got sWeatherList=$sWeatherList from local source")
                     Result.Success(sWeatherList)
                 } else {
                     Timber.d("sWeatherList not found in local source")
                     Result.Error(5, "sWeatherList not found in local source")
                 }
             } catch (e: Exception) {
-                Timber.d("sWeatherList remote source returned error=$e")
+                Timber.d("sWeatherList local source returned error=$e")
                 Result.Error(-1, e.toString())
             }
         }
@@ -85,21 +84,37 @@ class LocalDataSource(private val appDao: AppDao) {
             appDao.insertFavLocation(sLocation)
         }
 
-    fun observeFavLocationList(): LiveData<Result<List<ShortLocation>>> {
+    fun observeFavLocationList(): LiveData<List<ShortLocation>> {
         return appDao.observeFavLocationList().map { favLocationList ->
             Timber.d("Got locationList=$favLocationList from local source")
             if (favLocationList == null) {
                 Timber.d("Location list null. Setting with empty list")
                 val emptyList: List<ShortLocation> = listOf()
-                Result.Success(emptyList)
+                emptyList
             } else {
-                Result.Success(favLocationList)
+                favLocationList
             }
         }
     }
 
-    suspend fun deleteFavLocation(name: String) =
+    suspend fun deleteFavLocation(sLocation: ShortLocation) =
         withContext(Dispatchers.IO) {
-            appDao.deleteShortLocation(name)
+            appDao.deleteShortLocation(sLocation)
+        }
+
+    suspend fun isWeatherSaved(name: String): Result<Boolean> =
+        withContext(Dispatchers.IO) {
+            return@withContext try {
+                val isSaved: Int? = appDao.isWeatherSaved(name)
+                Timber.d("Got isWeatherSaved=$isSaved from local source")
+                if (isSaved != null) {
+                    Result.Success(true)
+                } else {
+                    Result.Success(false)
+                }
+            } catch (e: Exception) {
+                Timber.d("isWeatherSaved local source returned error=$e")
+                Result.Error(-1, e.toString())
+            }
         }
 }

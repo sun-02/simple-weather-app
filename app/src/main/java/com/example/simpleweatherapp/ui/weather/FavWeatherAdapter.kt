@@ -7,9 +7,9 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.simpleweatherapp.R
-import com.example.simpleweatherapp.databinding.ItemFavoriteLocationsBinding
+import com.example.simpleweatherapp.databinding.ItemFavoriteLocationBinding
 import com.example.simpleweatherapp.model.openweather.ShortWeather
-import com.example.simpleweatherapp.ResourcesMapping.weatherImagesRes
+import com.example.simpleweatherapp.ResourcesMapping.weatherIconsRes
 import com.example.simpleweatherapp.ui.OnItemClickListener
 import com.example.simpleweatherapp.util.intToSignedString
 
@@ -33,10 +33,8 @@ class FavWeatherAdapter(
         viewType: Int
     ): FavWeatherViewHolder =
         FavWeatherViewHolder(
-            ItemFavoriteLocationsBinding.inflate(
-                LayoutInflater.from(parent.context),
-                parent, false
-            ), listener
+            ItemFavoriteLocationBinding.inflate(LayoutInflater.from(parent.context)),
+            listener
         )
 
     override fun onBindViewHolder(holder: FavWeatherViewHolder, position: Int) {
@@ -45,15 +43,15 @@ class FavWeatherAdapter(
     }
 
     class FavWeatherViewHolder(
-        private val binding: ItemFavoriteLocationsBinding,
+        private val binding: ItemFavoriteLocationBinding,
         private val listener: OnItemClickListener
     ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
         fun bind(sw: ShortWeather) {
             val locName = sw.name.split(", ")[0]
-            val weatherRes = weatherImagesRes[sw.weatherIcon] ?: R.drawable.ic_unavailable
+            val weatherRes = weatherIconsRes[sw.weatherIcon] ?: R.drawable.ic_unavailable
             val tempFormatted = itemView.context
-                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(sw.temp))
+                .getString(R.string.temp_formatted, intToSignedString(sw.temp))
 
             binding.apply {
                 tvFavLocation.text = locName

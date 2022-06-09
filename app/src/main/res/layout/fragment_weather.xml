@@ -87,6 +87,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_medium"
+                        android:layout_marginTop="@dimen/margin_tiny_plus"
                         android:text="@string/weather_stub"
                         android:textAlignment="center"
                         android:textColor="@color/text_color"
@@ -102,6 +103,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginStart="@dimen/margin_medium"
+                        android:layout_marginTop="@dimen/margin_tiny_plus"
                         android:text="@string/feels_like_stub"
                         android:textAlignment="center"
                         android:textColor="@color/text_color_semitransparent"
@@ -113,14 +115,6 @@
                         tools:ignore="TextContrastCheck" />
 
                     <!-- Used to show correct skeleton on fetching data -->
-                    <View
-                        android:id="@+id/current_temp_and_weather_stub"
-                        android:layout_width="@dimen/big_picture_size"
-                        android:layout_height="@dimen/big_picture_size"
-                        app:layout_constraintBottom_toBottomOf="@+id/iv_weather"
-                        app:layout_constraintEnd_toEndOf="@id/tv_current_temp"
-                        app:layout_constraintStart_toStartOf="@id/tv_current_temp"
-                        app:layout_constraintTop_toTopOf="@+id/iv_weather" />
 
                     <androidx.constraintlayout.widget.Guideline
                         android:id="@+id/gh_190dp"
@@ -273,7 +267,8 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         app:barrierDirection="bottom"
-                        app:constraint_referenced_ids="rv_hourly_forecast,rv_hourly_forecast_stub" />
+                        app:constraint_referenced_ids="rv_hourly_forecast,rv_hourly_forecast_stub"
+                        tools:layout_editor_absoluteY="431dp" />
 
                     <View
                         android:id="@+id/div_hourly_forecast"
@@ -293,7 +288,7 @@
                         android:layout_marginTop="@dimen/margin_medium"
                         android:text="@string/daily_forecast_label"
                         android:textColor="@color/text_color"
-                        android:textSize="@dimen/font_medium"
+                        android:textSize="@dimen/font_small_plus"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/div_hourly_forecast"
                         tools:ignore="TextContrastCheck" />

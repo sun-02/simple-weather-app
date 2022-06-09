@@ -13,7 +13,7 @@
     <string name="data_outdated">Weather data is outdated. Check internet connection</string>
 
     <!--  TextView formatted  -->
-    <string name="temp_n_dew_point_formatted">%1$s\u00B0</string>
+    <string name="temp_formatted">%1$s\u00B0</string>
     <string name="feels_like_formatted">Feels like %1$s\u00B0</string>
     <string name="wind_speed_formatted">%1$s m/s</string>
     <string name="humidity_formatted">%1$s%2$s</string>

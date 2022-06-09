@@ -18,6 +18,7 @@
             android:layout_height="wrap_content"
             android:elevation="0dp"
             android:textAlignment="center"
+            app:menu="@menu/menu_fav"
             app:navigationIcon="@drawable/ic_back_24dp"
             app:title="@string/favorites"
             app:titleTextAppearance="@style/ToolbarTitle"
@@ -38,25 +39,31 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="@dimen/margin_medium"
+                android:layout_marginEnd="@dimen/margin_medium"
                 android:layout_marginTop="@dimen/margin_medium"
                 android:text="@string/current_location_label"
                 android:textColor="@color/text_color_semitransparent"
-                android:textSize="@dimen/font_small"
-                tools:layout_marginEnd="@dimen/margin_medium" />
+                android:textSize="@dimen/font_small" />
 
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/barrier_thin"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:background="@color/divider" />
 
             <include
-                android:id="@+id/current_location"
-                layout="@layout/item_favorite_locations"
+                android:id="@+id/incl_current_location"
+                layout="@layout/item_favorite_location"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/margin_medium"
                 android:layout_marginStart="@dimen/margin_medium"
                 android:layout_marginEnd="@dimen/margin_medium" />
 
             <View
-                android:id="@+id/div_current_location"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/barrier_thick"
+                android:layout_marginTop="@dimen/margin_medium"
                 android:background="@color/divider" />
 
             <TextView
@@ -66,20 +73,23 @@
                 android:layout_marginTop="@dimen/margin_medium"
                 android:text="@string/favorite_locations_label"
                 android:textColor="@color/text_color_semitransparent"
-                android:textSize="@dimen/font_small"
-                tools:layout_marginEnd="@dimen/margin_medium" />
+                android:textSize="@dimen/font_small"/>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/barrier_thin"
+                android:layout_marginTop="@dimen/margin_medium"
+                android:background="@color/divider" />
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_favorite_locations"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_medium"
-                android:layout_marginEnd="@dimen/margin_medium"
+                android:layout_margin="@dimen/margin_medium"
                 android:orientation="vertical"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                tools:itemCount="5"
                 tools:ignore="SpeakableTextPresentCheck"
-                tools:listitem="@layout/item_favorite_locations" />
+                tools:listitem="@layout/item_favorite_location" />
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

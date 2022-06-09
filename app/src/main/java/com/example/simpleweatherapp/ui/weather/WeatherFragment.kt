@@ -15,7 +15,9 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -42,7 +44,7 @@ import com.vmadalin.easypermissions.dialogs.SettingsDialog
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import timber.log.Timber
-import java.time.LocalTime
+import java.time.Instant
 import java.time.temporal.ChronoUnit
 
 
@@ -98,15 +100,18 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
     }
 
     private fun setupWeather() {
-        lifecycleScope.launch {
-            Timber.d("Collecting weather availability")
-            viewModel.isWeatherAvailable.collect { isAvailable ->
-                if (!isAvailable) {
-                    val dialog = ApiUnavailableDialogFragment()
-                    dialog.setTargetFragment(this@WeatherFragment, 1)
-                    Timber.d("Navigating to ApiUnavailableDialogFragment")
-                    dialog.show(
-                        parentFragmentManager, ApiUnavailableDialogFragment.TAG)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                Timber.d("Collecting weather availability")
+                viewModel.isWeatherAvailable.collect { isAvailable ->
+                    if (!isAvailable) {
+                        val dialog = ApiUnavailableDialogFragment()
+                        dialog.setTargetFragment(this@WeatherFragment, 1)
+                        Timber.d("Navigating to ApiUnavailableDialogFragment")
+                        dialog.show(
+                            parentFragmentManager, ApiUnavailableDialogFragment.TAG
+                        )
+                    }
                 }
             }
         }
@@ -136,30 +141,124 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
             swiperefresh.setOnRefreshListener(this@WeatherFragment)
         }
 
-        lifecycleScope.launch {
-            Timber.d("Observing addTo/removeFrom favorites button click")
-            viewModel.favLocationList.observe(viewLifecycleOwner) { locations ->
-                setFavorite(locations)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                Timber.d("Observing addTo/removeFrom favorites button click")
+                viewModel.favLocationList.observe(viewLifecycleOwner) { locations ->
+                    setIsFavoriteIcon()
+                }
             }
         }
         Timber.d("Weather UI is prepared")
 
 
-        lifecycleScope.launch {
-            Timber.d("Collecting weather changes")
-            viewModel.currentWeather.collect {
-                bindWeather(it)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                Timber.d("Collecting weather changes")
+                viewModel.selectedWeather.collect {
+                    bindWeather(it)
+                }
             }
         }
 
         Timber.d("Refreshing location and weather")
-        refreshWeather()
+        setVmWeather()
     }
 
-    private fun setFavorite(locations: List<ShortLocation>) {
-        val sLocation = viewModel.savedState.get<ShortLocation>(Const.LAST_LOCATION_KEY)
+    private fun bindWeather(weather: OneCallWeather) {
+        Timber.d("Binding weather UI")
+        with (weather) {
+            val titleLocation = name.split(", ")[0]
+            val titleTime = DtUtil.localTimeOfInstant(instant, zoneOffset).format(timeFormatter)
+            val weatherImageRes =weatherImagesRes[weatherIcon] ?: R.drawable.ic_unavailable
+            val tempFormatted = getString(R.string.temp_formatted, intToSignedString(temp))
+            val feelsLikeFormatted =
+                getString(R.string.feels_like_formatted, intToSignedString(feelsLike))
+            val textColor = getColor(requireContext(), R.color.text_color)
+
+            val wind = windSpeed.toString()
+            val windFormatted = getString(R.string.wind_speed_formatted, wind)
+            val windSpanned = paintStartValue(windFormatted, wind, textColor)
+            val windDirRes = getResFromRange(windDirectionsRes, weather.windDeg)
+            val windDirText = getString(windDirRes ?: R.string.unavailable)
+            val windArrow = AppCompatResources.getDrawable(
+                requireContext(), R.drawable.ic_arrow_rotate
+            )!!
+            windArrow.level = (weather.windDeg * Const.ROTATION_ANGLE_TO_LEVEL_COEF).toInt()
+
+            val humidity = humidity.toString()
+            val humidityFormatted = getString(R.string.humidity_formatted, humidity, "%")
+            val humiditySpanned = paintStartValue(humidityFormatted, humidity, textColor)
+
+            val pressure = pressure.toString()
+            val pressureFormatted = getString(R.string.pressure_formatted, pressure)
+            val pressureSpanned = paintStartValue(pressureFormatted, pressure, textColor)
+
+            val dewPoint = dewPoint.toString()
+            val dewPointFormatted = getString(R.string.temp_formatted, dewPoint)
+            val dewPointSpanned = paintStartValue(dewPointFormatted, dewPoint, textColor)
+
+            val visibility = (visibility / 1000).toString()
+            val visibilityFormatted = getString(R.string.visibility_formatted, visibility)
+            val visibilitySpanned = paintStartValue(visibilityFormatted, visibility, textColor)
+
+            val uvi = uvi.toString()
+            val uviFormatted = getString(R.string.uvi_formatted, uvi)
+            val uviSpanned = paintEndValue(uviFormatted, uvi, textColor)
+            val uviIconRes = getResFromRange(uviIconsRes, this.uvi) ?: R.drawable.ic_unavailable
+            val uviIcon = AppCompatResources.getDrawable(requireContext(), uviIconRes)
+
+            setIsFavoriteIcon()
+
+            binding.apply {
+                toolbarWeather.title = "$titleLocation, $titleTime"
+                tvCurrentTemp.text = tempFormatted
+                tvCurrentWeather.text = weather.weatherTitle
+                ivWeather.setImageResource(weatherImageRes)
+                tvCurrentFeelsLike.text = feelsLikeFormatted
+                tvCurrentWind.text = windSpanned
+                tvCurrentWindDeg.text = windDirText
+                tvCurrentWindDeg.setCompoundDrawablesWithIntrinsicBounds(
+                    windArrow, null, null, null
+                )
+                tvCurrentHumidity.text = humiditySpanned
+                tvCurrentPressure.text = pressureSpanned
+                tvCurrentDewPoint.text = dewPointSpanned
+                tvCurrentVisibility.text = visibilitySpanned
+                tvCurrentUvi.text = uviSpanned
+                tvCurrentUvi.setCompoundDrawablesWithIntrinsicBounds(
+                    uviIcon, null, null, null
+                )
+
+                hourlyForecastAdapter.submitList(weather.hourlyForecast)
+                dailyForecastAdapter.submitList(weather.dailyForecast)
+
+                // Replacing stubs with actual views before turning skeleton off
+                rvHourlyForecastStub.root.visibility = View.GONE
+                rvHourlyForecast.visibility = View.VISIBLE
+                rvDailyForecastStub.root.visibility = View.GONE
+                rvDailyForecast.visibility = View.VISIBLE
+
+                swiperefresh.isRefreshing = false
+                Timber.d("Weather UI binded")
+
+                binding.skeletonLayout.showOriginal()
+                Timber.d("Skeleton is off")
+
+                val instantNow = Instant.now()
+                val instantWeather = instant
+                if (instantWeather.until(instantNow, ChronoUnit.MINUTES) > 5) {
+                    showDataOutdatedSnackbar()
+                }
+            }
+        }
+    }
+
+    private fun setIsFavoriteIcon() {
+        val lastLocation = viewModel.savedState.get<ShortLocation>(Const.LAST_LOCATION_KEY)
+        val favLocations = viewModel.favLocationList.value!!
         binding.toolbarWeather.menu!!.getItem(0).apply {
-            if (locations.contains(sLocation)) {
+            if (favLocations.contains(lastLocation)) {
                 isFavorite = true
                 setIcon(R.drawable.ic_heart_filled_24dp)
             } else {
@@ -170,117 +269,37 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
         }
     }
 
-    private fun bindWeather(weather: OneCallWeather) {
-        Timber.d("Binding weather UI")
-        val titlePopPlace = weather.name!!.split(", ")[0]
-        val titleTime = weather.dateTime.toLocalTime().format(timeFormatter)
-
-        val weatherIconBigRes =
-            weatherImagesRes[weather.weatherIcon] ?: R.drawable.ic_unavailable
-
-        val temp = weather.temp
-        val tempFormatted = getString(R.string.temp_n_dew_point_formatted, intToSignedString(temp))
-
-        val feelsLike = weather.feelsLike
-        val feelsLikeFormatted = getString(R.string.feels_like_formatted, intToSignedString(feelsLike))
-
-        val textColor = getColor(requireContext(), R.color.text_color)
-        
-        val wind = weather.windSpeed.toString()
-        val windFormatted = getString(R.string.wind_speed_formatted, wind)
-        val windSpanned = paintStartValue(windFormatted, wind, textColor)
-        val windDirRes = getResFromRange(windDirectionsRes, weather.windDeg)
-        val windDirText = getString(windDirRes ?: R.string.unavailable)
-        val windArrow = AppCompatResources.getDrawable(
-            requireContext(), R.drawable.ic_arrow_rotate)!!
-        windArrow.level = (weather.windDeg * Const.DEGREE_TO_LEVEL_COEF).toInt()
-        
-        val humidity = weather.humidity.toString()
-        val humidityFormatted = getString(R.string.humidity_formatted, humidity, "%")
-        val humiditySpanned = paintStartValue(humidityFormatted, humidity, textColor)
-
-        val pressure = weather.pressure.toString()
-        val pressureFormatted = getString(R.string.pressure_formatted, pressure)
-        val pressureSpanned = paintStartValue(pressureFormatted, pressure, textColor)
-        
-        val dewPoint = weather.dewPoint.toString()
-        val dewPointFormatted = getString(R.string.temp_n_dew_point_formatted, dewPoint)
-        val dewPointSpanned = paintStartValue(dewPointFormatted, dewPoint, textColor)
-
-        val visibility = (weather.visibility / 1000).toString()
-        val visibilityFormatted = getString(R.string.visibility_formatted, visibility)
-        val visibilitySpanned = paintStartValue(visibilityFormatted, visibility, textColor)
-
-        val uvi = weather.uvi.toString()
-        val uviFormatted = getString(R.string.uvi_formatted, uvi)
-        val uviSpanned = paintEndValue(uviFormatted, uvi, textColor)
-        val uviIconRes = getResFromRange(uviIconsRes, weather.uvi) ?: R.drawable.ic_unavailable
-        val uviIcon = AppCompatResources.getDrawable(requireContext(), uviIconRes)
-        
-        binding.apply {
-            toolbarWeather.title = "$titlePopPlace, $titleTime"
-            tvCurrentTemp.text = tempFormatted
-            tvCurrentWeather.text = weather.weatherTitle
-            ivWeather.setImageResource(weatherIconBigRes)
-            tvCurrentFeelsLike.text = feelsLikeFormatted
-            tvCurrentWind.text = windSpanned
-            tvCurrentWindDeg.text = windDirText
-            tvCurrentWindDeg.setCompoundDrawablesWithIntrinsicBounds(
-                windArrow, null, null, null)
-            tvCurrentHumidity.text = humiditySpanned
-            tvCurrentPressure.text = pressureSpanned
-            tvCurrentDewPoint.text = dewPointSpanned
-            tvCurrentVisibility.text = visibilitySpanned
-            tvCurrentUvi.text = uviSpanned
-            tvCurrentUvi.setCompoundDrawablesWithIntrinsicBounds(
-                uviIcon, null, null, null)
-
-            hourlyForecastAdapter.submitList(weather.hourlyForecast)
-            dailyForecastAdapter.submitList(weather.dailyForecast)
-
-            // Replacing stubs with actual views before turning skeleton off
-            currentTempAndWeatherStub.visibility = View.GONE
-            rvHourlyForecastStub.root.visibility = View.GONE
-            rvHourlyForecast.visibility = View.VISIBLE
-            rvDailyForecastStub.root.visibility = View.GONE
-            rvDailyForecast.visibility = View.VISIBLE
-
-            setFavorite(viewModel.favLocationList.value!!)
-
-            swiperefresh.isRefreshing = false
-            Timber.d("Weather UI binded")
-
-            binding.skeletonLayout.showOriginal()
-            Timber.d("Skeleton is off")
-
-            val now = LocalTime.now()
-            val weatherTimeStamp = weather.dateTime.toLocalTime()
-            if (weatherTimeStamp.until(now, ChronoUnit.MINUTES) > 5) {
-                showDataOutdatedSnackbar()
-            }
-        }
-    }
-
     private fun showDataOutdatedSnackbar() {
         Snackbar.make(binding.root, R.string.data_outdated, Snackbar.LENGTH_INDEFINITE)
             .setAction(R.string.refresh) {
                 Timber.d("Refreshing weather UI from DataOutdated snackbar")
-                refreshWeather()
+                refreshVmWeather()
             }.show()
     }
 
-    private fun refreshWeather() {
+    private fun refreshVmWeather() {
+        binding.skeletonLayout.showSkeleton()
+        Timber.d("Skeleton is on")
+        viewModel.refreshWeather()
+    }
+
+    private fun setVmWeather() {
         binding.skeletonLayout.showSkeleton()
         Timber.d("Skeleton is on")
         if (args.newShortLocation != null) {
             Timber.d("Set VM weather from args")
             viewModel.refreshWeather(args.newShortLocation!!)
             return
+        } else {
+            requestPermissionForCurrentLocation()
         }
+    }
+
+    private fun requestPermissionForCurrentLocation() {
         Timber.d("Set VM weather with location API")
         if (hasCoarseLocationPermission()) {
             Timber.d("Has location services permission")
-            refreshWeatherWithCurrentLocation()
+            setVmWeatherWithCurrentLocation()
         } else {
             Timber.d("Hasn't location services permission")
             requestCoarseLocationPermission()
@@ -288,15 +307,16 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
     }
 
     @SuppressLint("MissingPermission")
-    private fun refreshWeatherWithCurrentLocation() {
+    private fun setVmWeatherWithCurrentLocation() {
         Timber.d("Getting location from fusedLocationClient")
         application.fusedLocationClient.lastLocation.addOnCompleteListener { locationTask ->
-//            val lastLocation = locationTask.result
-//            if (lastLocation != null &&
-//                System.currentTimeMillis() - lastLocation.time < Const.LOCATION_REFRESH_INTERVAL) {
-//                Timber.d("Setting VM with last location services location")
-//                viewModel.setWeather(lastLocation)
-//            } else {
+            val lastLocation = locationTask.result
+            if (lastLocation != null &&
+                System.currentTimeMillis() - lastLocation.time < Const.LOCATION_REFRESH_INTERVAL) {
+                Timber.d("Got current location:(lat=${lastLocation.latitude}, " +
+                        "lon=${lastLocation.longitude})from fusedLocationClient. Setting VM")
+                viewModel.refreshWeather(lastLocation)
+            } else {
                 application.fusedLocationClient.getCurrentLocation(
                     LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY,
                     CancellationTokenSource().token
@@ -311,7 +331,7 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
                         viewModel.refreshWeather()
                     }
                 }
-//            }
+            }
         }
     }
 
@@ -340,7 +360,7 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
 
     override fun onPermissionsGranted(requestCode: Int, perms: List<String>) {
         Timber.d("Permission granted after request. Refreshing location and weather")
-        refreshWeatherWithCurrentLocation()
+        setVmWeatherWithCurrentLocation()
     }
 
     override fun onPermissionsDenied(requestCode: Int, perms: List<String>) {
@@ -356,10 +376,10 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
     override fun onRefresh() {
         Timber.d("Refreshing weather UI with swipe")
         binding.skeletonLayout.showSkeleton()
-        refreshWeather()
+        refreshVmWeather()
     }
 
-    override fun onItemClick(view: View?, position: Int) {
+    override fun onItemClick(v: View?, position: Int) {
         val action = WeatherFragmentDirections.actionToDailyForecastExtendedFragment(position)
         findNavController().navigate(action)
         Timber.d("Navigating to ForecastExtendedFragment")
@@ -370,7 +390,7 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
             DialogInterface.BUTTON_POSITIVE -> {
                 Timber.d("Refreshing weather UI from ApiUnavailable dialog")
                 (dialog as AlertDialog).dismiss()
-                refreshWeather()
+                setVmWeather()
             }
             DialogInterface.BUTTON_NEGATIVE -> {
                 Timber.d("ApiUnavailable dialog cancelled. Exiting app")
@@ -396,7 +416,7 @@ class WeatherFragment : Fragment(), OnItemClickListener, SwipeRefreshLayout.OnRe
                 val currentLocation = viewModel.savedState.get<ShortLocation>(Const.LAST_LOCATION_KEY)
                 Timber.d("Got sLocation = $currentLocation from saved state")
                 if (isFavorite) {
-                    viewModel.removeFavLocation(currentLocation!!.name)
+                    viewModel.removeFavLocation(currentLocation!!)
                     Timber.d("Removed sLocation = $currentLocation from favorites")
                 } else {
                     viewModel.addFavLocation(currentLocation!!)

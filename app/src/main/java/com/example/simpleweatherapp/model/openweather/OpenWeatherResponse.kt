@@ -16,9 +16,9 @@ data class OpenWeatherResponse(
 
 @JsonClass(generateAdapter = true)
 data class Current(
-    val dt: Int,
-    val sunrise: Int,
-    val sunset: Int,
+    val dt: Long,
+    val sunrise: Long,
+    val sunset: Long,
     val temp: Double,
     val feels_like: Double,
     val pressure: Int,
@@ -55,7 +55,7 @@ data class Snow(
 
 @JsonClass(generateAdapter = true)
 data class Hourly(
-    val dt: Int,
+    val dt: Long,
     val temp: Double,
     val feels_like: Double,
     val pressure: Int,
@@ -75,11 +75,11 @@ data class Hourly(
 
 @JsonClass(generateAdapter = true)
 data class Daily(
-    val dt: Int,
-    val sunrise: Int,
-    val sunset: Int,
-    val moonrise: Int,
-    val moonset: Int,
+    val dt: Long,
+    val sunrise: Long,
+    val sunset: Long,
+    val moonrise: Long,
+    val moonset: Long,
     val moon_phase: Double,
     val temp: Temp,
     val feels_like: FeelsLike,

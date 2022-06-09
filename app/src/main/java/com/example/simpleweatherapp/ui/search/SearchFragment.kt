@@ -9,13 +9,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.marginTop
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import com.example.simpleweatherapp.SimpleWeatherApplication
 import com.example.simpleweatherapp.databinding.FragmentSearchBinding
 import com.example.simpleweatherapp.model.bingmaps.ShortLocation
 import com.example.simpleweatherapp.ui.OnItemClickListener
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class SearchFragment : Fragment(), TextWatcher, OnItemClickListener {
     private val viewModel: SearchViewModel by viewModels {
@@ -53,20 +56,24 @@ class SearchFragment : Fragment(), TextWatcher, OnItemClickListener {
         locationsListAdapter = LocationsListAdapter(this)
         recyclerView.adapter = locationsListAdapter
 
-        lifecycleScope.launchWhenStarted {
-            viewModel.locations.collect { locations ->
-                this@SearchFragment.shortLocations = locations
-                locationsListAdapter.submitList(locations)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.locations.collect { locations ->
+                    this@SearchFragment.shortLocations = locations.distinct()
+                    locationsListAdapter.submitList(locations)
+                }
             }
         }
-        lifecycleScope.launchWhenStarted {
-            viewModel.mapsApiAvailable.collect { mapsApiAvailable ->
-                if (mapsApiAvailable) {
-                    binding.noWifiImageView.visibility = View.GONE
-                    recyclerView.visibility = View.VISIBLE
-                } else {
-                    binding.noWifiImageView.visibility = View.VISIBLE
-                    recyclerView.visibility = View.GONE
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                viewModel.mapsApiAvailable.collect { mapsApiAvailable ->
+                    if (mapsApiAvailable) {
+                        binding.noWifiImageView.visibility = View.GONE
+                        recyclerView.visibility = View.VISIBLE
+                    } else {
+                        binding.noWifiImageView.visibility = View.VISIBLE
+                        recyclerView.visibility = View.GONE
+                    }
                 }
             }
         }
@@ -91,8 +98,10 @@ class SearchFragment : Fragment(), TextWatcher, OnItemClickListener {
         }
     }
 
-    override fun onItemClick(view: View?, position: Int) {
-        TODO("Not yet implemented")
+    override fun onItemClick(v: View?, position: Int) {
+        val action =
+            SearchFragmentDirections.actionToCurrentWeatherFragment(shortLocations[position])
+        findNavController().navigate(action)
     }
 
     override fun onDestroyView() {

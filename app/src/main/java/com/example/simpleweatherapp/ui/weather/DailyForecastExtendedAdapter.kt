@@ -14,9 +14,12 @@ import com.example.simpleweatherapp.util.*
 import com.example.simpleweatherapp.ResourcesMapping.weatherImagesRes
 import com.example.simpleweatherapp.ResourcesMapping.uviIconsRes
 import com.example.simpleweatherapp.ResourcesMapping.windDirectionsRes
+import java.time.Instant
+import java.time.ZoneOffset
 
-class DailyForecastExtendedAdapter(private val dailyForecastList: List<DailyForecast>) :
-    RecyclerView.Adapter<DailyForecastExtendedAdapter.DailyForecastExtendedViewHolder>() {
+class DailyForecastExtendedAdapter(
+    private val dailyForecastList: List<DailyForecast>
+) : RecyclerView.Adapter<DailyForecastExtendedAdapter.DailyForecastExtendedViewHolder>() {
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
@@ -44,35 +47,35 @@ class DailyForecastExtendedAdapter(private val dailyForecastList: List<DailyFore
 
             val tempMorning = df.mornTemp
             val tempMorningFormatted = itemView.context
-                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempMorning))
+                .getString(R.string.temp_formatted, intToSignedString(tempMorning))
 
             val tempDay = df.dayTemp
             val tempDayFormatted = itemView.context
-                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempDay))
+                .getString(R.string.temp_formatted, intToSignedString(tempDay))
 
             val tempEvening = df.eveTemp
             val tempEveningFormatted = itemView.context
-                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempEvening))
+                .getString(R.string.temp_formatted, intToSignedString(tempEvening))
 
             val tempNight = df.nightTemp
             val tempNightFormatted = itemView.context
-                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempNight))
+                .getString(R.string.temp_formatted, intToSignedString(tempNight))
 
             val feelsLikeMorning = df.mornFeelsLike
             val feelsLikeMorningFormatted = itemView.context
-                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(feelsLikeMorning))
+                .getString(R.string.temp_formatted, intToSignedString(feelsLikeMorning))
 
             val feelsLikeDay = df.dayFeelsLike
             val feelsLikeDayFormatted = itemView.context
-                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(feelsLikeDay))
+                .getString(R.string.temp_formatted, intToSignedString(feelsLikeDay))
 
             val feelsLikeEvening = df.eveFeelsLike
             val feelsLikeEveningFormatted = itemView.context
-                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(feelsLikeEvening))
+                .getString(R.string.temp_formatted, intToSignedString(feelsLikeEvening))
 
             val feelsLikeNight = df.nightFeelsLike
             val feelsLikeNightFormatted = itemView.context
-                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(feelsLikeNight))
+                .getString(R.string.temp_formatted, intToSignedString(feelsLikeNight))
             
             val wind = df.windSpeed.toString()
             val windFormatted = itemView.context
@@ -83,7 +86,7 @@ class DailyForecastExtendedAdapter(private val dailyForecastList: List<DailyFore
             val windArrow = AppCompatResources.getDrawable(
                 itemView.context, R.drawable.ic_arrow_rotate
             )!!
-            windArrow.level = (df.windDeg * Const.DEGREE_TO_LEVEL_COEF).toInt()
+            windArrow.level = (df.windDeg * Const.ROTATION_ANGLE_TO_LEVEL_COEF).toInt()
 
             val humidity = df.humidity.toString()
             val humidityFormatted = itemView.context
@@ -124,13 +127,19 @@ class DailyForecastExtendedAdapter(private val dailyForecastList: List<DailyFore
                 tvDailyExUvi.setCompoundDrawablesWithIntrinsicBounds(
                     null, uviIcon, null, null)
                 tvDailyExUvi.text = uviSpanned
-                tvDailyExSunrise.text = df.sunrise.format(timeFormatter)
-                tvDailyExSunset.text = df.sunset.format(timeFormatter)
-                tvDailyExMoonrise.text = df.moonrise.format(timeFormatter)
-                tvDailyExMoonset.text = df.moonset.format(timeFormatter)
+                tvDailyExSunrise.text = getFormattedTime(df.sunrise, df.zoneOffset)
+                tvDailyExSunset.text = getFormattedTime(df.sunset, df.zoneOffset)
+                tvDailyExMoonrise.text = getFormattedTime(df.moonrise, df.zoneOffset)
+                tvDailyExMoonset.text = getFormattedTime(df.moonset, df.zoneOffset)
             }
         }
     }
 
     override fun getItemCount(): Int = dailyForecastList.size
+
+    companion object {
+        private fun getFormattedTime(instant: Instant, zoneOffset: ZoneOffset) =
+            DtUtil.localTimeOfInstant(instant, zoneOffset).format(timeFormatter)
+    }
+
 }

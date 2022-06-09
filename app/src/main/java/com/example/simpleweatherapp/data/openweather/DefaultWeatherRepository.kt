@@ -51,8 +51,9 @@ class DefaultWeatherRepository(
     private suspend fun saveWeather(weather: OneCallWeather) =
         localDataSource.saveWeather(weather)
 
-    override suspend fun deleteOldWeather(latestDateEpochSeconds: Int) =
-        localDataSource.deleteOldWeather(latestDateEpochSeconds)
+    override suspend fun deleteOldWeather(thresholdEpochSeconds: Long) =
+        localDataSource.deleteOldWeather(thresholdEpochSeconds)
 
-
+    override suspend fun isWeatherSaved(name: String): Result<Boolean> =
+        localDataSource.isWeatherSaved(name)
 }

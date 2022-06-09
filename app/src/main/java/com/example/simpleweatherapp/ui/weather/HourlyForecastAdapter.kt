@@ -10,7 +10,10 @@ import com.example.simpleweatherapp.R
 import com.example.simpleweatherapp.databinding.ItemHourlyForecastBinding
 import com.example.simpleweatherapp.model.openweather.HourlyForecast
 import com.example.simpleweatherapp.ResourcesMapping.weatherIconsRes
+import com.example.simpleweatherapp.util.DtUtil
 import com.example.simpleweatherapp.util.intToSignedString
+import java.time.LocalTime
+import java.time.ZoneOffset
 
 class HourlyForecastAdapter : ListAdapter<HourlyForecast,
         HourlyForecastAdapter.HourlyForecastViewHolder>(DiffCallback) {
@@ -18,7 +21,7 @@ class HourlyForecastAdapter : ListAdapter<HourlyForecast,
     companion object DiffCallback : DiffUtil.ItemCallback<HourlyForecast>() {
 
         override fun areItemsTheSame(oldItem: HourlyForecast, newItem: HourlyForecast): Boolean {
-            return oldItem.dateTime == newItem.dateTime
+            return oldItem.instant == newItem.instant
         }
 
         override fun areContentsTheSame(oldItem: HourlyForecast, newItem: HourlyForecast): Boolean {
@@ -41,19 +44,19 @@ class HourlyForecastAdapter : ListAdapter<HourlyForecast,
     ) = holder.bind(getItem(position))
 
     class HourlyForecastViewHolder(
-        private val binding: ItemHourlyForecastBinding,
+        private val binding: ItemHourlyForecastBinding
     ) : RecyclerView.ViewHolder(binding.root) {
 
         fun bind(hf: HourlyForecast) {
             val temp = hf.temp
             val tempFormatted = itemView.context
-                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(temp))
+                .getString(R.string.temp_formatted, intToSignedString(temp))
 
             val weatherIconRes =
                 weatherIconsRes[hf.weatherIcon] ?: R.drawable.ic_unavailable
 
             binding.apply {
-                tvHour.text = hf.dateTime.format(timeFormatter)
+                tvHour.text = DtUtil.localTimeOfInstant(hf.instant, hf.zoneOffset).format(timeFormatter)
                 ivWeather.setImageResource(weatherIconRes)
                 tvTemp.text = tempFormatted
             }

@@ -8,7 +8,9 @@ import android.widget.TextView
 import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.example.simpleweatherapp.DateTimeFormatters.dowShortFormatter
@@ -16,12 +18,16 @@ import com.example.simpleweatherapp.R
 import com.example.simpleweatherapp.SimpleWeatherApplication
 import com.example.simpleweatherapp.databinding.FragmentDailyForecastExtendedBinding
 import com.example.simpleweatherapp.model.openweather.DailyForecast
+import com.example.simpleweatherapp.util.DtUtil
 import com.example.simpleweatherapp.util.getStatusBarHeight
 import com.example.simpleweatherapp.util.setToolbarLayoutTopMarginWithRespectOfStatusBarHeight
 import com.google.android.material.tabs.TabLayoutMediator
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class DailyForecastExtendedFragment : Fragment() {
 
@@ -50,22 +56,32 @@ class DailyForecastExtendedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.toolbarDailyForecast
-            .setToolbarLayoutTopMarginWithRespectOfStatusBarHeight(getStatusBarHeight())
+        binding.toolbarDailyForecast.apply {
+            setToolbarLayoutTopMarginWithRespectOfStatusBarHeight(getStatusBarHeight())
+            setNavigationOnClickListener {
+                findNavController().navigateUp()
+            }
+        }
 
         _application = requireContext().applicationContext as SimpleWeatherApplication
 
-
-        lateinit var dailyForecastList: List<DailyForecast>
-        lifecycleScope.launch {
-            dailyForecastList = viewModel.currentWeather.first().dailyForecast!!
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                val weather = viewModel.selectedWeather.first()
+                bindDailyForecast(weather.dailyForecast!!, weather.zoneOffset)
+            }
         }
 
-        binding.pager.adapter = DailyForecastExtendedAdapter(dailyForecastList)
-        binding.pager.setCurrentItem(args.position, false)
+    }
+
+    private fun bindDailyForecast(dfList: List<DailyForecast>, zoneOffset: ZoneOffset) {
+        binding.pager.apply {
+            adapter = DailyForecastExtendedAdapter(dfList)
+            setCurrentItem(args.position, false)
+        }
 
         TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
-            val date = dailyForecastList[position].date
+            val date = DtUtil.localDateOfInstant(dfList[position].instant, zoneOffset)
             tab.setCustomView(R.layout.tab_custom_view)
             val dowTv = (tab.customView as ViewGroup).getChildAt(0) as TextView
             dowTv.text = date.format(dowShortFormatter)
@@ -74,14 +90,11 @@ class DailyForecastExtendedFragment : Fragment() {
             }
             tab.text = date.dayOfMonth.toString()
         }.attach()
-
-        binding.toolbarDailyForecast.setNavigationOnClickListener {
-            findNavController().navigateUp()
-        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
+        binding.pager.adapter = null
         _binding = null
         _application = null
     }

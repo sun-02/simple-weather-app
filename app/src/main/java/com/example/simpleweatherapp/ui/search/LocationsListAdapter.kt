@@ -27,7 +27,7 @@ class LocationsListAdapter(
         }
 
         override fun onClick(v: View?) {
-            itemClickListener.onItemClick(v, adapterPosition)
+            itemClickListener.onItemClick(v, layoutPosition)
         }
     }
 

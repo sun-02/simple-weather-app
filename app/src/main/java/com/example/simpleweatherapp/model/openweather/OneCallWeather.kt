@@ -1,14 +1,13 @@
 package com.example.simpleweatherapp.model.openweather
 
 import androidx.room.*
-import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.LocalTime
+import java.time.*
 
 @Entity(tableName = "one_call_weather")
 data class OneCallWeather(
     @PrimaryKey  var name: String,
-    @ColumnInfo(name = "date_time") val dateTime: LocalDateTime,
+    val instant: Instant,
+    @ColumnInfo(name = "zone_offset") val zoneOffset: ZoneOffset,
     val temp: Int,
     @ColumnInfo(name = "feels_like") val feelsLike: Int,
     val pressure: Int,
@@ -21,7 +20,6 @@ data class OneCallWeather(
     @ColumnInfo(name = "weather_title") val weatherTitle: String,
     @ColumnInfo(name = "weather_icon") val weatherIcon: String,
 ) {
-//    constructor() : this(LocalDateTime.now(), 0, 0, 0, 0, 0, 0, 0, 0, 0, "", "")
     @Ignore var hourlyForecast: List<HourlyForecast>? = null
     @Ignore var dailyForecast: List<DailyForecast>? = null
 }
@@ -32,11 +30,11 @@ data class OneCallWeather(
     childColumns = arrayOf("parent_name"),
     onDelete = ForeignKey.CASCADE,
     onUpdate = ForeignKey.CASCADE
-)], primaryKeys = ["parent_name", "date_time"]
-)
+)], primaryKeys = ["parent_name", "instant"])
 data class HourlyForecast(
     @ColumnInfo(name = "parent_name") val parentName: String,
-    @ColumnInfo(name = "date_time") val dateTime: LocalDateTime,
+    val instant: Instant,
+    @ColumnInfo(name = "zone_offset") val zoneOffset: ZoneOffset,
     val temp: Int,
     @ColumnInfo(name = "weather_icon") val weatherIcon: String
 )
@@ -47,11 +45,11 @@ data class HourlyForecast(
     childColumns = arrayOf("parent_name"),
     onDelete = ForeignKey.CASCADE,
     onUpdate = ForeignKey.CASCADE
-)], primaryKeys = ["parent_name", "date"]
-)
+)], primaryKeys = ["parent_name", "instant"])
 data class DailyForecast(
     @ColumnInfo(name = "parent_name") val parentName: String,
-    val date: LocalDate,
+    val instant: Instant,
+    @ColumnInfo(name = "zone_offset") val zoneOffset: ZoneOffset,
     @ColumnInfo(name = "morn_temp") val mornTemp: Int,
     @ColumnInfo(name = "day_temp") val dayTemp: Int,
     @ColumnInfo(name = "eve_temp") val eveTemp: Int,
@@ -65,9 +63,9 @@ data class DailyForecast(
     val uvi: Int,
     @ColumnInfo(name = "wind_speed") val windSpeed: Int,
     @ColumnInfo(name = "wind_deg") val windDeg: Int,
-    val sunrise: LocalTime,
-    val sunset: LocalTime,
-    val moonrise: LocalTime,
-    val moonset: LocalTime,
+    val sunrise: Instant,
+    val sunset: Instant,
+    val moonrise: Instant,
+    val moonset: Instant,
     @ColumnInfo(name = "weather_icon") val weatherIcon: String
 )

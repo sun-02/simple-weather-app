@@ -16,7 +16,9 @@ import com.example.simpleweatherapp.ui.OnItemClickListener
 import com.example.simpleweatherapp.util.*
 import com.example.simpleweatherapp.ResourcesMapping.weatherIconsRes
 import java.time.DayOfWeek
-
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.ZoneOffset
 
 class DailyForecastAdapter(
     private val listener: OnItemClickListener
@@ -25,7 +27,7 @@ class DailyForecastAdapter(
     companion object DiffCallback : DiffUtil.ItemCallback<DailyForecast>() {
 
         override fun areItemsTheSame(oldItem: DailyForecast, newItem: DailyForecast): Boolean {
-            return oldItem.date == newItem.date
+            return oldItem.instant == newItem.instant
         }
 
         override fun areContentsTheSame(oldItem: DailyForecast, newItem: DailyForecast): Boolean {
@@ -43,10 +45,7 @@ class DailyForecastAdapter(
         )
 
 
-    override fun onBindViewHolder(
-        holder: DailyForecastViewHolder,
-        position: Int
-    ) {
+    override fun onBindViewHolder(holder: DailyForecastViewHolder, position: Int) {
         val dailyForecast = getItem(position)
         holder.bind(dailyForecast)
     }
@@ -56,37 +55,36 @@ class DailyForecastAdapter(
         private val listener: OnItemClickListener
     ) : RecyclerView.ViewHolder(binding.root), View.OnClickListener {
 
-        fun bind(
-            df: DailyForecast
-        ) {
+        fun bind(df: DailyForecast) {
             val redColorRed = ContextCompat.getColor(itemView.context, R.color.text_color_red)
             val textColor = ContextCompat.getColor(itemView.context, R.color.text_color)
 
+            val date = DtUtil.localDateOfInstant(df.instant, df.zoneOffset)
             val dowFormatted = when (layoutPosition) {
                 0 -> itemView.context.getString(R.string.today)
                 1 -> itemView.context.getString(R.string.tomorrow)
-                else -> df.date.format(dowFormatter)
+                else -> date.format(dowFormatter)
             }
             val dowSpanned = if(
-                df.date.dayOfWeek == DayOfWeek.SATURDAY || df.date.dayOfWeek == DayOfWeek.SUNDAY
+                date.dayOfWeek == DayOfWeek.SATURDAY || date.dayOfWeek == DayOfWeek.SUNDAY
             ) {
                 paintStartValue(dowFormatted, dowFormatted, redColorRed)
             } else {
                 paintStartValue(dowFormatted, dowFormatted, textColor)
             }
 
-            val dateFormatted = df.date.format(dateFormatter)
+            val dateFormatted = date.format(dateFormatter)
 
             val weatherIconRes =
                 weatherIconsRes[df.weatherIcon] ?: R.drawable.ic_unavailable
 
             val tempDay = df.dayTemp
             val tempDayFormatted = itemView.context
-                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempDay))
+                .getString(R.string.temp_formatted, intToSignedString(tempDay))
 
             val tempNight = df.nightTemp
             val tempNightFormatted = itemView.context
-                .getString(R.string.temp_n_dew_point_formatted, intToSignedString(tempNight))
+                .getString(R.string.temp_formatted, intToSignedString(tempNight))
 
             binding.apply {
                 tvDailyDow.text = dowSpanned

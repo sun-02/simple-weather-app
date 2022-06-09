@@ -9,6 +9,10 @@
         android:id="@+id/named_location"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:maxLength="@integer/search_view_max_length"
-        android:text="@string/lorem_ipsum_short" />
+        android:layout_marginStart="@dimen/margin_medium"
+        android:layout_marginEnd="@dimen/margin_medium"
+        android:layout_marginTop="@dimen/margin_tiny_plus"
+        android:layout_marginBottom="@dimen/margin_tiny_plus"
+        android:textSize="@dimen/font_medium"
+        android:text="@string/location_stub" />
 </FrameLayout>

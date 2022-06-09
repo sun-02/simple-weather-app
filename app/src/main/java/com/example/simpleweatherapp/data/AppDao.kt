@@ -32,8 +32,8 @@ interface AppDao {
     @Query("SELECT `name`, `temp`, weather_icon FROM one_call_weather WHERE name IN (:names)")
     fun getFavWeatherList(names: List<String>): List<ShortWeather>?
 
-    @Query("DELETE FROM one_call_weather WHERE date_time < :latestDateEpochSeconds")
-    suspend fun deleteOldWeather(latestDateEpochSeconds: Int)
+    @Query("DELETE FROM one_call_weather WHERE instant < :thresholdEpochSeconds")
+    suspend fun deleteOldWeather(thresholdEpochSeconds: Long)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFavLocation(sLocation: ShortLocation)
@@ -41,6 +41,9 @@ interface AppDao {
     @Query("SELECT * FROM short_location")
     fun observeFavLocationList(): LiveData<List<ShortLocation>?>
 
-    @Query("DELETE FROM short_location WHERE name = :name")
-    suspend fun deleteShortLocation(name: String)
+    @Delete
+    suspend fun deleteShortLocation(sLocation: ShortLocation)
+
+    @Query("SELECT 1 FROM one_call_weather WHERE name = :name")
+    suspend fun isWeatherSaved(name: String): Int?
 }
